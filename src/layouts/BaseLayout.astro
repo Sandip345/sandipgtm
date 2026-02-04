@@ -1,0 +1,120 @@
+---
+import '@/styles/global.css';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {description ? <meta name="description" content={description} /> : null}
+
+    <!-- Prevent light flash before dark mode loads -->
+    <script>
+      if (
+        localStorage.theme === 'dark' ||
+        (!('theme' in localStorage) &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches)
+      ) {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
+  </head>
+
+  <body class="min-h-screen bg-white text-slate-900 antialiased dark:bg-[#050607] dark:text-[#d7fbe7]">
+    <Header />
+
+    <main class="mx-auto max-w-5xl px-4 py-10">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <style>
+      /* Terminal-style palette (subtle + readable) */
+      :global(html) { color-scheme: light dark; }
+      :global(body) { transition: background-color .2s ease, color .2s ease; }
+
+      /* Terminal-ish background (very subtle glow + tiny scanlines) */
+      :global(.dark body) {
+        background:
+          radial-gradient(900px 500px at 20% 0%, rgba(34,197,94,0.12), transparent 60%),
+          radial-gradient(700px 380px at 90% 10%, rgba(56,189,248,0.08), transparent 55%),
+          linear-gradient(to bottom, rgba(255,255,255,0.02), rgba(255,255,255,0.00)),
+          repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.012),
+            rgba(255,255,255,0.012) 1px,
+            rgba(0,0,0,0) 3px,
+            rgba(0,0,0,0) 6px
+          ),
+          #050607;
+      }
+
+      /* Links */
+      :global(a) { transition: color .15s ease; }
+      :global(.dark a) { color: rgba(215,251,231,0.9); }
+      :global(.dark a:hover) { color: rgba(34,197,94,0.95); }
+
+      /* Utility classes you can reuse in pages */
+      :global(.t-muted) { color: rgb(71 85 105); }              /* slate-600 light */
+      :global(.t-meta)  { color: rgb(100 116 139); }            /* slate-500 light */
+      :global(.dark .t-muted) { color: rgba(215,251,231,0.72); }
+      :global(.dark .t-meta)  { color: rgba(215,251,231,0.55); }
+
+      /* Terminal panel/card */
+      :global(.t-card) {
+        background: #ffffff;
+        border: 1px solid rgb(226 232 240);
+        border-radius: 16px;
+      }
+      :global(.dark .t-card) {
+        background: rgba(15, 20, 24, 0.85);
+        border-color: rgba(255,255,255,0.10);
+        box-shadow: 0 0 0 1px rgba(34,197,94,0.06);
+      }
+      :global(.dark .t-card:hover) {
+        border-color: rgba(34,197,94,0.28);
+        box-shadow:
+          0 0 0 1px rgba(34,197,94,0.10),
+          0 18px 50px rgba(0,0,0,0.55);
+      }
+
+      /* Terminal badge (for "Latest News", tags, etc.) */
+      :global(.t-badge) {
+        border-radius: 9999px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: rgb(241 245 249);
+        color: rgb(15 23 42);
+      }
+      :global(.dark .t-badge) {
+        background: rgba(34,197,94,0.12);
+        color: rgba(134,239,172,0.95);
+        border: 1px solid rgba(34,197,94,0.20);
+      }
+
+      /* Monospace accent (use on small labels/buttons only) */
+      :global(.t-mono) {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        letter-spacing: 0.01em;
+      }
+
+      /* Respect reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        :global(*) { scroll-behavior: auto !important; }
+      }
+    </style>
+  </body>
+</html>

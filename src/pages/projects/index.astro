@@ -1,0 +1,37 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const projects = (await getCollection('projects')).sort((a, b) =>
+  (b.data.date ?? '').localeCompare(a.data.date ?? '')
+);
+---
+
+<BaseLayout title="Projects" description="All projects">
+  <div class="mb-8 space-y-2">
+    <h1 class="text-3xl font-semibold tracking-tight">Projects</h1>
+    <p class="text-slate-600">Markdown-driven projects from <code class="rounded bg-slate-100 px-1">src/content/projects</code>.</p>
+  </div>
+
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {projects.map((p) => (
+      <a
+        href={`/projects/${p.slug}`}
+class="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-emerald-300"
+      >
+        <div class="space-y-2">
+          <div class="text-sm text-slate-500">{p.data.date ?? p.data.period ?? ''}</div>
+          <div class="text-xl font-semibold tracking-tight dark:text-slate-100">{p.data.title}</div>
+          <p class="line-clamp-3 text-sm text-slate-600">{p.data.description ?? 'Open to read details.'}</p>
+          {p.data.tags?.length ? (
+            <div class="flex flex-wrap gap-2 pt-1">
+              {p.data.tags.slice(0, 4).map((t) => (
+                <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-700">{t}</span>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      </a>
+    ))}
+  </div>
+</BaseLayout>

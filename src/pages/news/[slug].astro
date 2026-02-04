@@ -1,0 +1,27 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const items = await getCollection('news');
+  return items.map((n) => ({ params: { slug: n.slug }, props: { n } }));
+}
+
+const { n } = Astro.props;
+const { Content } = await n.render();
+---
+
+<BaseLayout title={`${n.data.title} — News`} description={n.data.description}>
+  <div class="space-y-4">
+    <a href="/news" class="text-sm text-slate-600 hover:text-slate-900">← Back to news</a>
+
+    <header class="space-y-1">
+      <h1 class="text-3xl font-semibold tracking-tight">{n.data.title}</h1>
+      {n.data.date ? <div class="text-sm text-slate-500">{n.data.date}</div> : null}
+    </header>
+
+    <article class="prose prose-slate max-w-none">
+      <Content />
+    </article>
+  </div>
+</BaseLayout>
