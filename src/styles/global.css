@@ -4,3 +4,34 @@
 
 /* small global tweaks */
 :root { color-scheme: light; }
+
+/* ============================= */
+/* Terminal Typewriter Animation */
+/* ============================= */
+
+/* Typing effect */
+.typewriter {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: none;
+  max-width: 0;
+  animation: typing 1.5s steps(17, end) forwards;
+}
+
+/* Adjust 17 to match character count of your text */
+@keyframes typing {
+  from { max-width: 0; }
+  to   { max-width: 22ch; }
+}
+
+/* Blinking cursor */
+.cursor-blink {
+  display: inline-block;
+  color: #34d399; /* emerald */
+  animation: cursorBlink 1s steps(2, end) infinite;
+}
+
+@keyframes cursorBlink {
+  50% { opacity: 0; }
+}

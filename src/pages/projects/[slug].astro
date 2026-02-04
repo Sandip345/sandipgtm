@@ -9,37 +9,99 @@ export async function getStaticPaths() {
 
 const { p } = Astro.props;
 const { Content } = await p.render();
+
+const cover = p.data.coverImage ?? p.data.cover ?? null; // supports either field
 ---
 
 <BaseLayout title={`${p.data.title} — Projects`} description={p.data.description}>
-  <div class="space-y-4">
-    <a href="/projects" class="text-sm text-slate-600 hover:text-slate-900">← Back to projects</a>
+  <div class="space-y-6">
+    <a
+      href="/projects"
+      class="t-mono t-meta inline-flex items-center gap-2 text-xs hover:text-slate-900 dark:hover:text-emerald-300"
+    >
+      <span aria-hidden="true">←</span> BACK TO PROJECTS
+    </a>
 
-    <header class="space-y-2">
-      <h1 class="text-3xl font-semibold tracking-tight">{p.data.title}</h1>
-      <div class="flex flex-wrap items-center gap-2 text-sm text-slate-500">
-        {p.data.date ? <span>{p.data.date}</span> : null}
+    <header class="space-y-3">
+      <div class="t-mono t-meta text-xs">
+        $ cat ./projects/{p.slug}.md <span class="cursor-blink ml-1">|</span>
+      </div>
+
+      <h1 class="text-3xl font-semibold tracking-tight dark:text-emerald-300">
+        {p.data.title}
+      </h1>
+
+      <div class="flex flex-wrap items-center gap-2">
+        {p.data.date ? (
+          <span class="t-badge t-mono">{p.data.date}</span>
+        ) : null}
+
         {p.data.tags?.length ? (
-          <span class="flex flex-wrap gap-2">
+          <div class="flex flex-wrap gap-2">
             {p.data.tags.map((t) => (
-              <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-700">{t}</span>
+              <span class="t-badge t-mono">{t}</span>
             ))}
-          </span>
+          </div>
         ) : null}
       </div>
+
+      {p.data.description ? (
+        <p class="t-muted max-w-3xl leading-relaxed">
+          {p.data.description}
+        </p>
+      ) : null}
     </header>
 
-    {p.data.cover ? (
-      <img
-        src={p.data.cover}
-        alt=""
-        class="w-full rounded-2xl border border-slate-200"
-        loading="lazy"
-      />
+    {cover ? (
+      <div class="t-card overflow-hidden">
+        <img
+          src={cover}
+          alt={p.data.title}
+          class="w-full"
+          loading="lazy"
+        />
+      </div>
     ) : null}
 
-    <article class="prose prose-slate max-w-none">
-      <Content />
+    {/* Content */}
+    <article class="t-card p-6 md:p-8">
+      <div class="prose prose-slate max-w-none dark:prose-invert">
+        <Content />
+      </div>
     </article>
   </div>
+
+  <style>
+    /* Improve readability + terminal feel inside prose */
+    :global(.dark .prose) {
+      color: rgba(215, 251, 231, 0.86);
+    }
+    :global(.dark .prose strong) {
+      color: rgba(215, 251, 231, 0.95);
+    }
+    :global(.dark .prose a) {
+      color: rgba(110, 231, 183, 0.95);
+      text-decoration: none;
+    }
+    :global(.dark .prose a:hover) {
+      text-decoration: underline;
+    }
+    :global(.dark .prose code) {
+      color: rgba(134, 239, 172, 0.95);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      padding: 0.15rem 0.35rem;
+      border-radius: 0.5rem;
+    }
+    :global(.dark .prose pre) {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+    }
+    :global(.dark .prose hr) {
+      border-color: rgba(255, 255, 255, 0.10);
+    }
+    :global(.dark .prose blockquote) {
+      border-left-color: rgba(34, 197, 94, 0.35);
+    }
+  </style>
 </BaseLayout>

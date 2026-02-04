@@ -1,10 +1,46 @@
-<footer class="border-t border-slate-200">
-  <div class="mx-auto flex max-w-5xl flex-col gap-2 px-4 py-8 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between">
-    <p>© {new Date().getFullYear()} Sandip Gautam</p>
-    <div class="flex gap-4">
-      <a class="hover:text-slate-900" href="mailto:sandipgautam787@gmail.com">Email</a>
-      <a class="hover:text-slate-900" href="https://github.com/Sandip345">GitHub</a>
-      <a class="hover:text-slate-900" href="https://www.linkedin.com/in/sg177/">LinkedIn</a>
+<footer class="border-t border-slate-200 dark:border-white/10">
+  <div class="mx-auto max-w-5xl px-4 py-10">
+    <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+
+      {/* Left side */}
+      <div class="space-y-2">
+        <div class="t-mono t-meta text-xs">
+          $ echo "Portfolio initialized successfully" <span class="cursor-blink ml-1">|</span>
+        </div>
+
+        <p class="text-sm text-slate-600 dark:text-[#d7fbe7]/70">
+          © {new Date().getFullYear()} Sandip Gautam
+        </p>
+      </div>
+
+      {/* Right side links */}
+      <div class="flex flex-wrap items-center gap-5 text-sm">
+        <a
+          href="mailto:sandipgautam787@gmail.com"
+          class="t-mono text-slate-600 hover:text-slate-900 dark:text-[#d7fbe7]/80 dark:hover:text-emerald-300 transition"
+        >
+          EMAIL
+        </a>
+
+        <a
+          href="https://github.com/Sandip345"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="t-mono text-slate-600 hover:text-slate-900 dark:text-[#d7fbe7]/80 dark:hover:text-emerald-300 transition"
+        >
+          GITHUB
+        </a>
+
+        <a
+          href="https://www.linkedin.com/in/sg177/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="t-mono text-slate-600 hover:text-slate-900 dark:text-[#d7fbe7]/80 dark:hover:text-emerald-300 transition"
+        >
+          LINKEDIN
+        </a>
+      </div>
+
     </div>
   </div>
 </footer>
