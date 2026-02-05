@@ -20,14 +20,18 @@ const { title, description } = Astro.props;
 
     <!-- Prevent light flash before dark mode loads -->
     <script>
-      if (
-        localStorage.theme === 'dark' ||
-        (!('theme' in localStorage) &&
-          window.matchMedia('(prefers-color-scheme: dark)').matches)
-      ) {
-        document.documentElement.classList.add('dark');
-      }
-    </script>
+  // Default = dark
+  const saved = localStorage.theme;
+
+  if (saved === 'light') {
+    document.documentElement.classList.remove('dark');
+  } else {
+    // saved === 'dark' OR nothing saved => dark
+    document.documentElement.classList.add('dark');
+    if (!saved) localStorage.theme = 'dark';
+  }
+</script>
+
   </head>
 
   <body class="min-h-screen bg-white text-slate-900 antialiased dark:bg-[#050607] dark:text-[#d7fbe7]">

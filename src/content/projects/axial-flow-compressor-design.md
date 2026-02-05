@@ -7,7 +7,7 @@ description: Gained hands‑on experience designing and analyzing a subsonic axi
   Ansys CFX to evaluate compressor performance metrics such as pressure ratio
   and efficiency. Learned how blade shape affects flow separation and optimized
   design parameters to meet target performance.
-coverImage: "/images/uploads/experience/abc.jpg"
+coverImage: "/images/uploads/projects/compressor/compressor_cover.png"
 tags:
   - Compressor design
   - Ansys CFX

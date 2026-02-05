@@ -6,9 +6,9 @@ description: Designed a mobile trolley system to facilitate safe handling and
   ergonomics assessments using CATIA V5 to ensure the trolley could support the
   required loads while remaining easy to maneuver. Considered manufacturing
   constraints and proposed a cost‑effective fabrication plan.
-coverImage: "/images/uploads/experience/abc.jpg"
+coverImage: "/images/uploads/projects/trolley/Trolley.png"
 tags:
   - Mechanical Design
   - CATIA
 ---
-T﻿o be added later
+To be added later
