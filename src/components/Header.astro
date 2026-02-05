@@ -17,7 +17,8 @@ const nav = [
       <span class="ml-2 align-middle">Sandip Gautam</span>
     </a>
 
-    <nav aria-label="Primary" class="flex items-center gap-2 text-sm">
+    <!-- Desktop nav -->
+    <nav aria-label="Primary" class="hidden items-center gap-2 text-sm md:flex">
       {nav.map((i) => (
         <a
           href={i.href}
@@ -43,9 +44,107 @@ const nav = [
                dark:border-emerald-400/30 dark:text-emerald-300 dark:hover:bg-emerald-500/10"
         aria-label="Toggle dark mode"
         title="Toggle theme"
+        type="button"
       >
         ⌘ THEME
       </button>
     </nav>
+
+    <!-- Mobile buttons (theme + hamburger) -->
+    <div class="flex items-center gap-2 md:hidden">
+      <button
+        onclick="
+          document.documentElement.classList.toggle('dark');
+          localStorage.theme =
+            document.documentElement.classList.contains('dark')
+              ? 'dark'
+              : 'light';
+        "
+        class="t-mono rounded-md border px-3 py-2 text-[11px]
+               border-slate-300 text-slate-700 hover:bg-slate-100
+               dark:border-emerald-400/30 dark:text-emerald-300 dark:hover:bg-emerald-500/10"
+        aria-label="Toggle dark mode"
+        title="Toggle theme"
+        type="button"
+      >
+        ⌘
+      </button>
+
+      <button
+        id="menuBtn"
+        class="inline-flex items-center justify-center rounded-md border border-slate-300 p-2 text-slate-700 hover:bg-slate-100
+               dark:border-emerald-400/30 dark:text-emerald-300 dark:hover:bg-emerald-500/10"
+        aria-controls="mobileMenu"
+        aria-expanded="false"
+        aria-label="Open menu"
+        type="button"
+      >
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
   </div>
+
+  <!-- Mobile menu -->
+  <div id="mobileMenu" class="hidden md:hidden">
+    <div class="mx-auto max-w-5xl px-4 pb-4">
+      <div class="rounded-xl border border-slate-200 bg-white/95 p-2 shadow-sm backdrop-blur
+                  dark:border-white/10 dark:bg-[#050607]/95">
+        <nav class="grid gap-1 text-sm">
+          {nav.map((i) => (
+            <a
+              href={i.href}
+              class="rounded-lg px-3 py-2 text-slate-700 hover:bg-slate-100
+                     dark:text-[#cfeedd] dark:hover:bg-white/5 dark:hover:text-emerald-300"
+            >
+              {i.label}
+            </a>
+          ))}
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toggle script -->
+  <script is:inline>
+    const btn = document.getElementById("menuBtn");
+    const menu = document.getElementById("mobileMenu");
+
+    function closeMenu() {
+      menu?.classList.add("hidden");
+      btn?.setAttribute("aria-expanded", "false");
+      btn?.setAttribute("aria-label", "Open menu");
+    }
+
+    function openMenu() {
+      menu?.classList.remove("hidden");
+      btn?.setAttribute("aria-expanded", "true");
+      btn?.setAttribute("aria-label", "Close menu");
+    }
+
+    btn?.addEventListener("click", () => {
+      const isOpen = btn.getAttribute("aria-expanded") === "true";
+      isOpen ? closeMenu() : openMenu();
+    });
+
+    // Close on Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeMenu();
+    });
+
+    // Close when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!btn || !menu) return;
+      const t = e.target;
+      const isOpen = btn.getAttribute("aria-expanded") === "true";
+      const inside = menu.contains(t) || btn.contains(t);
+      if (isOpen && !inside) closeMenu();
+    });
+
+    // Close when clicking a link
+    menu?.addEventListener("click", (e) => {
+      if (e.target.closest("a")) closeMenu();
+    });
+  </script>
 </header>
