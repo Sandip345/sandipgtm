@@ -7,6 +7,7 @@ description: Designed a fixed‑wing battery‑powered UAV for power line inspec
   Python scripts to evaluate aerodynamic performance across flight envelopes and
   produced a comprehensive poster presentation detailing the UAV's capabilities
   and potential impact on power line maintenance.
+coverImage: "/images/uploads/experience/abc.jpg"
 tags:
   - Aerodynamics
   - UAV Design

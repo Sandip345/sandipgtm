@@ -2,9 +2,11 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
+const allEducation = await getCollection('education');
 const allProjects = await getCollection('projects');
 const allNews = await getCollection('news');
 const allExperiences = await getCollection('experience');
+
 
 // Latest ONE news
 const latestNews = allNews
@@ -16,15 +18,63 @@ const latestNews = allNews
   })
   .slice(0, 1);
 
+// education
+const education = allEducation
+  .slice()
+  .sort((a, b) => {
+    const yearA = parseInt(a.data.start?.match(/\d{4}/)?.[0] ?? '0');
+    const yearB = parseInt(b.data.start?.match(/\d{4}/)?.[0] ?? '0');
+    return yearB - yearA; // latest first
+  });
+
+
 // Latest 3 experiences
 const experiences = allExperiences
   .slice()
   .sort((a, b) => (b.data.start ?? '').localeCompare(a.data.start ?? ''))
-  .slice(0, 3);
+  .slice(0, 1);
 
 // Max 6 projects (featured first if exists)
-const featured = allProjects.filter((p) => p.data.featured);
-const projects = (featured.length ? featured : allProjects).slice(0, 6);
+const toSortableTime = (p) => {
+  const raw = (p.data.date ?? p.data.period ?? '').toString().trim();
+  if (!raw) return 0;
+
+  // 1) ISO-like: YYYY-MM or YYYY-MM-DD
+  const iso = raw.match(/^(\d{4})(?:-(\d{2}))?(?:-(\d{2}))?/);
+  if (iso) {
+    const y = Number(iso[1]);
+    const m = Number(iso[2] ?? '01');
+    const d = Number(iso[3] ?? '01');
+    return new Date(y, m - 1, d).getTime();
+  }
+
+  // 2) Month name + year: "Aug 2024", "August 2024"
+  const my = raw.match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+(\d{4})/i);
+  if (my) {
+    const months = { jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12 };
+    const mon = months[my[1].slice(0,3).toLowerCase()] ?? 1;
+    const y = Number(my[2]);
+    return new Date(y, mon - 1, 1).getTime();
+  }
+
+  // 3) Year anywhere: "2020", "2020–2021", "Fall 2023"
+  const yOnly = raw.match(/(\d{4})/);
+  if (yOnly) {
+    const y = Number(yOnly[1]);
+    return new Date(y, 0, 1).getTime();
+  }
+
+  return 0;
+};
+
+// Sort latest first (by best-available date/period)
+const sortedProjects = allProjects
+  .slice()
+  .sort((a, b) => toSortableTime(b) - toSortableTime(a));
+
+// Featured first (but still sorted latest-first inside featured)
+const featured = sortedProjects.filter((p) => p.data.featured);
+const projects = (featured.length ? featured : sortedProjects).slice(0, 4);
 ---
 
 <BaseLayout
@@ -37,10 +87,6 @@ const projects = (featured.length ? featured : allProjects).slice(0, 6);
      <h1 class="typewriter text-3xl sm:text-4xl font-bold tracking-tight dark:text-emerald-300">
   Hi, I am Sandip<span class="cursor-blink ml-1">|</span>
 </h1>
-
-
-
-
       <p class="t-muted text-lg leading-relaxed">
         <span class="font-medium text-slate-900 dark:text-[#d7fbe7]">
           Mechanical Engineering M.S. student
@@ -113,6 +159,54 @@ const projects = (featured.length ? featured : allProjects).slice(0, 6);
     ) : null}
   </section>
 
+    <!-- Education (homepage only) -->
+  {education.length ? (
+    <section class="mt-12">
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="t-mono text-xs font-semibold tracking-wider text-slate-700 dark:text-emerald-300/90">
+          EDUCATION
+        </h2>
+      </div>
+
+      <div class="space-y-4">
+        {education.map((ed) => (
+          <div class="t-card p-6">
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <div class="t-mono t-meta text-xs">
+                {ed.data.start}{ed.data.end ? ` - ${ed.data.end}` : ''}
+              </div>
+              <span class="text-slate-300 dark:text-white/20">•</span>
+              <div class="t-meta text-xs">
+                <span class="t-mono font-semibold text-slate-800 dark:text-[#d7fbe7]">
+                  {ed.data.school}
+                </span>
+                {ed.data.location ? ` — ${ed.data.location}` : ''}
+              </div>
+            </div>
+
+            <div class="mt-2 text-lg font-semibold text-slate-900 dark:text-[#d7fbe7]">
+              {ed.data.degree}
+            </div>
+
+            {ed.data.courses?.length ? (
+              <div class="mt-4">
+                <div class="t-mono t-meta text-xs mb-2">COURSEWORK</div>
+                <div class="flex flex-wrap gap-2">
+                  {ed.data.courses.map((c) => (
+                    <span class="t-badge t-mono">{c}</span>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </div>
+        ))}
+      </div>
+    </section>
+  ) : null}
+
+
+
+
   <!-- Experience (text-only) -->
   <section class="mt-12">
     <div class="mb-4 flex items-center justify-between">
@@ -158,6 +252,12 @@ const projects = (featured.length ? featured : allProjects).slice(0, 6);
     </div>
   </section>
 
+
+
+
+
+
+
   <!-- Projects (max 6) -->
   <section class="mt-12">
     <div class="mb-4 flex items-end justify-between">
@@ -170,7 +270,7 @@ const projects = (featured.length ? featured : allProjects).slice(0, 6);
       </a>
     </div>
 
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
       {projects.map((p) => (
         <a
           href={`/projects/${p.slug}`}

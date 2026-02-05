@@ -7,6 +7,7 @@ description: Enhanced existing MATLAB code for two‑dimensional heat conduction
   and heat flux through the domain. The project improved numerical stability and
   provided additional visualization outputs, making the tool more versatile for
   thermal analysis.
+coverImage: "/images/uploads/experience/abc.jpg"
 tags:
   - MATLAB
   - Finite Element Method

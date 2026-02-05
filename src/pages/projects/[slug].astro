@@ -14,7 +14,8 @@ const cover = p.data.coverImage ?? p.data.cover ?? null; // supports either fiel
 ---
 
 <BaseLayout title={`${p.data.title} — Projects`} description={p.data.description}>
-  <div class="space-y-6">
+  {/* Centered content column so header + cards align */}
+  <div class="mx-auto w-full max-w-4xl space-y-6">
     <a
       href="/projects"
       class="t-mono t-meta inline-flex items-center gap-2 text-xs hover:text-slate-900 dark:hover:text-emerald-300"
@@ -32,9 +33,7 @@ const cover = p.data.coverImage ?? p.data.cover ?? null; // supports either fiel
       </h1>
 
       <div class="flex flex-wrap items-center gap-2">
-        {p.data.date ? (
-          <span class="t-badge t-mono">{p.data.date}</span>
-        ) : null}
+        {p.data.date ? <span class="t-badge t-mono">{p.data.date}</span> : null}
 
         {p.data.tags?.length ? (
           <div class="flex flex-wrap gap-2">
@@ -46,7 +45,7 @@ const cover = p.data.coverImage ?? p.data.cover ?? null; // supports either fiel
       </div>
 
       {p.data.description ? (
-        <p class="t-muted max-w-3xl leading-relaxed">
+        <p class="t-muted leading-relaxed">
           {p.data.description}
         </p>
       ) : null}
@@ -54,16 +53,10 @@ const cover = p.data.coverImage ?? p.data.cover ?? null; // supports either fiel
 
     {cover ? (
       <div class="t-card overflow-hidden">
-        <img
-          src={cover}
-          alt={p.data.title}
-          class="w-full"
-          loading="lazy"
-        />
+        <img src={cover} alt={p.data.title} class="w-full" loading="lazy" />
       </div>
     ) : null}
 
-    {/* Content */}
     <article class="t-card p-6 md:p-8">
       <div class="prose prose-slate max-w-none dark:prose-invert">
         <Content />
@@ -73,19 +66,10 @@ const cover = p.data.coverImage ?? p.data.cover ?? null; // supports either fiel
 
   <style>
     /* Improve readability + terminal feel inside prose */
-    :global(.dark .prose) {
-      color: rgba(215, 251, 231, 0.86);
-    }
-    :global(.dark .prose strong) {
-      color: rgba(215, 251, 231, 0.95);
-    }
-    :global(.dark .prose a) {
-      color: rgba(110, 231, 183, 0.95);
-      text-decoration: none;
-    }
-    :global(.dark .prose a:hover) {
-      text-decoration: underline;
-    }
+    :global(.dark .prose) { color: rgba(215, 251, 231, 0.86); }
+    :global(.dark .prose strong) { color: rgba(215, 251, 231, 0.95); }
+    :global(.dark .prose a) { color: rgba(110, 231, 183, 0.95); text-decoration: none; }
+    :global(.dark .prose a:hover) { text-decoration: underline; }
     :global(.dark .prose code) {
       color: rgba(134, 239, 172, 0.95);
       background: rgba(255, 255, 255, 0.06);
@@ -97,11 +81,7 @@ const cover = p.data.coverImage ?? p.data.cover ?? null; // supports either fiel
       background: rgba(0, 0, 0, 0.35);
       border: 1px solid rgba(255, 255, 255, 0.10);
     }
-    :global(.dark .prose hr) {
-      border-color: rgba(255, 255, 255, 0.10);
-    }
-    :global(.dark .prose blockquote) {
-      border-left-color: rgba(34, 197, 94, 0.35);
-    }
+    :global(.dark .prose hr) { border-color: rgba(255, 255, 255, 0.10); }
+    :global(.dark .prose blockquote) { border-left-color: rgba(34, 197, 94, 0.35); }
   </style>
 </BaseLayout>

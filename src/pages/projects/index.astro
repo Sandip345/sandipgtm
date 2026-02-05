@@ -2,9 +2,65 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-const projects = (await getCollection('projects')).sort((a, b) =>
-  (b.data.date ?? '').localeCompare(a.data.date ?? '')
-);
+const allProjects = await getCollection('projects');
+
+/**
+ * Convert a project's date/period string into a sortable timestamp.
+ * Supports:
+ *  - date: "2024-08-15", "2024-08", "2024"
+ *  - date: "Aug 2024", "August 2024"
+ *  - period: "2020", "2020-2021", "2020–2021", "Fall 2023"
+ * If nothing usable, returns 0 (goes last).
+ */
+const toSortableTime = (p) => {
+  const raw = (p.data.date ?? p.data.period ?? '').toString().trim();
+  if (!raw) return 0;
+
+  // 1) ISO-like: YYYY, YYYY-MM, YYYY-MM-DD
+  const iso = raw.match(/^(\d{4})(?:-(\d{2}))?(?:-(\d{2}))?/);
+  if (iso) {
+    const y = Number(iso[1]);
+    const m = Number(iso[2] ?? '01');
+    const d = Number(iso[3] ?? '01');
+    return new Date(y, m - 1, d).getTime();
+  }
+
+  // 2) Month name + year: "Aug 2024", "August 2024"
+  const my = raw.match(
+    /(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\s+(\d{4})/i
+  );
+  if (my) {
+    const key = my[1].slice(0, 3).toLowerCase();
+    const months = {
+      jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6,
+      jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12,
+    };
+    const mon = months[key] ?? 1;
+    const y = Number(my[2]);
+    return new Date(y, mon - 1, 1).getTime();
+  }
+
+  // 3) Year range like "2020-2021" or "2020–2021" -> use END year as "latest"
+  const range = raw.match(/(\d{4})\s*[-–—]\s*(\d{4})/);
+  if (range) {
+    const endYear = Number(range[2]);
+    return new Date(endYear, 0, 1).getTime();
+  }
+
+  // 4) Any single year anywhere (e.g., "Fall 2023", "2020")
+  const yOnly = raw.match(/(\d{4})/);
+  if (yOnly) {
+    const y = Number(yOnly[1]);
+    return new Date(y, 0, 1).getTime();
+  }
+
+  return 0;
+};
+
+// Sort latest first
+const projects = allProjects
+  .slice()
+  .sort((a, b) => toSortableTime(b) - toSortableTime(a));
 ---
 
 <BaseLayout title="Projects" description="All projects">
@@ -14,10 +70,7 @@ const projects = (await getCollection('projects')).sort((a, b) =>
     </h1>
 
     <p class="t-muted text-sm">
-      Markdown-driven projects from{' '}
-      <code class="t-mono rounded bg-slate-100 px-1 dark:bg-white/5">
-        src/content/projects
-      </code>.
+      Selected work and engineering projects.
     </p>
 
     <div class="t-mono t-meta text-xs">
@@ -42,7 +95,6 @@ const projects = (await getCollection('projects')).sort((a, b) =>
                 class="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-105"
                 loading="lazy"
               />
-              {/* subtle terminal overlay */}
               <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-70 group-hover:opacity-50" />
             </div>
           ) : (

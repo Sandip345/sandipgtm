@@ -4,16 +4,12 @@ company: "University of New Hampshire"
 location: "Durham, NH"
 start: "2024-08"
 end: "Present"
-summary: "Studying turbulent vortex filament stretching and building SPOD workflows."
-coverImage: "/images/uploads/experience/abc.jpg"
-gallery:
-  - "/images/uploads/experience/abc.jpg"
-  - "/images/uploads/experience/bcd.jpg"
+summary: "I am currently working on AFSOR funded project on 'Vortex-surface interaction' where I am studying the free surface signature of the 3D counter rotating vortex pair and relating it with the sub-subsurface dynamics with the application in submarine stealth. "
 tags:
   - "Turbulence"
   - "MATLAB"
 ---
-
-This is the summary of the project description. weothpsdhg
-sdjgjshdgkh 
-sdighksdhg
+* Conduct experimental investigations of fluid systems with  repeatable test procedures, instrumentation setup, and structured data collection
+* Apply flow-physics reasoning to interpret system behavior (velocity fields, pressure/free-surface response) and communicate results to a mixed technical audience
+* Build analysis workflows in MATLAB/Python for processing large datasets and producing publication-quality figures
+* Coordinate tasks, document progress, and present updates; emphasize QA on plots/results and traceability of assumptions

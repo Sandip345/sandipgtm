@@ -7,6 +7,7 @@ description: Designed and built an experimental setup using a load cell,
   measurements, synchronized with flow conditions. Validated experimental
   results through CFD simulations in Ansys, comparing lift and drag coefficients
   across angle of attack ranges and identifying sources of experimental error.
+coverImage: "/images/uploads/experience/abc.jpg"
 tags:
   - DAQ
   - LabVIEW

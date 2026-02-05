@@ -6,6 +6,7 @@ description: Constructed a quadcopter using an Arduino Uno microcontroller and
   pitch stabilization and tuned parameters to achieve steady hover. Demonstrated
   the quadcopter’s capabilities at MechTRIX‑X, highlighting the integration of
   embedded programming, control theory, and mechanical design.
+coverImage: "/images/uploads/experience/abc.jpg"
 tags:
   - "Arduino "
   - Control Systems

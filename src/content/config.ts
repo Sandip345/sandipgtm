@@ -1,5 +1,18 @@
 import { defineCollection, z } from 'astro:content';
 
+const education = defineCollection({
+  type: 'content',
+  schema: z.object({
+    school: z.string(),
+    location: z.string().optional(),
+    degree: z.string(),
+    start: z.string(), // "Aug 2024"
+    end: z.string().optional(), // "Present" or "Apr 2023"
+    courses: z.array(z.string()).optional(),
+    order: z.number().optional(), // optional manual ordering
+  }),
+});
+
 const projects = defineCollection({
   type: 'content',
   schema: z
@@ -27,7 +40,6 @@ const news = defineCollection({
     .passthrough()
 });
 
-
 const experience = defineCollection({
   type: 'content',
   schema: z.object({
@@ -47,6 +59,7 @@ const experience = defineCollection({
 });
 
 export const collections = {
+  education,
   projects,
   news,
   experience,
