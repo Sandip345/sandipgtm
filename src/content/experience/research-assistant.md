@@ -4,7 +4,7 @@ company: "University of New Hampshire"
 location: "Durham, NH"
 start: "2024-08"
 end: "Present"
-summary: "I am currently working on AFSOR funded project on 'Vortex-surface interaction' where I am studying the free surface signature of the 3D counter rotating vortex pair and relating it with the sub-subsurface dynamics with the application in submarine stealth. "
+summary: "I am currently working on AFSOR funded project on 'Vortex-surface interaction' where I am studying the free surface signature of the 3D counter rotating vortex pair and relating it with the sub-surface dynamics with the application in submarine stealth. "
 tags:
   - "Turbulence"
   - "MATLAB"
