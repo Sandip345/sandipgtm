@@ -1,0 +1,58 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const items = (await getCollection('blog')).sort((a, b) =>
+  (b.data.date ?? '').localeCompare(a.data.date ?? '')
+);
+---
+
+<BaseLayout title="Blog" description="Updates and posts">
+  <div class="mb-8 space-y-2">
+    <h1 class="text-3xl font-semibold tracking-tight dark:text-emerald-300">
+      Blog
+    </h1>
+
+    <p class="t-muted text-sm">
+      Updates, milestones, and highlights.
+    </p>
+
+    <div class="t-mono t-meta text-xs">
+      $ tail -n {Math.min(items.length, 10)} ./blog.log <span class="cursor-blink ml-1">|</span>
+    </div>
+  </div>
+
+  <div class="space-y-4">
+    {items.map((n) => (
+      <a
+        href={`/blog/${n.slug}`}
+        class="t-card group block p-6 transition hover:-translate-y-0.5"
+      >
+        <div class="flex flex-wrap items-center gap-2">
+  {n.data.date ? <span class="t-badge t-mono">{n.data.date}</span> : null}
+
+  {n.data.tags?.map((tag) => (
+    <span class="t-badge t-mono opacity-80 hover:opacity-100 transition">
+      #{tag}
+    </span>
+  ))}
+
+  <span class="t-mono t-meta text-xs group-hover:text-slate-900 dark:group-hover:text-emerald-300">
+    OPEN →
+  </span>
+</div>
+
+
+        <h2 class="mt-3 text-xl font-semibold tracking-tight text-slate-900 dark:text-[#d7fbe7] group-hover:underline">
+          {n.data.title}
+        </h2>
+
+        {n.data.description ? (
+          <p class="t-muted mt-2 text-sm leading-relaxed">
+            {n.data.description}
+          </p>
+        ) : null}
+      </a>
+    ))}
+  </div>
+</BaseLayout>

@@ -4,6 +4,8 @@ const nav = [
   { href: '/experience', label: 'Experience' },
   { href: '/projects', label: 'Projects' },
   { href: '/news', label: 'News' },
+  { href: '/blog', label: 'Blog' },
+
 ];
 ---
 
@@ -31,23 +33,38 @@ const nav = [
 
       <span class="mx-1 h-5 w-px bg-slate-200 dark:bg-white/10" />
 
-      <button
-        onclick="
-          document.documentElement.classList.toggle('dark');
-          localStorage.theme =
-            document.documentElement.classList.contains('dark')
-              ? 'dark'
-              : 'light';
-        "
-        class="t-mono rounded-md border px-3 py-1 text-xs
-               border-slate-300 text-slate-700 hover:bg-slate-100
-               dark:border-emerald-400/30 dark:text-emerald-300 dark:hover:bg-emerald-500/10"
-        aria-label="Toggle dark mode"
-        title="Toggle theme"
-        type="button"
-      >
-        ⌘ THEME
-      </button>
+    <button
+  id="themeToggle"
+  class="t-mono rounded-md border px-3 py-1 text-xs
+         border-slate-300 text-slate-700 hover:bg-slate-100
+         dark:border-emerald-400/30 dark:text-emerald-300 dark:hover:bg-emerald-500/10"
+  aria-label="Toggle theme"
+  title="Toggle theme"
+  type="button"
+>
+  🌙 Dark Mode
+</button>
+
+<script>
+  const root = document.documentElement;
+  const button = document.getElementById("themeToggle");
+
+  function updateButtonText() {
+    const isDark = root.classList.contains("dark");
+    button.textContent = isDark ? "☀️ Light Mode" : "🌙 Dark Mode";
+  }
+
+  button.addEventListener("click", () => {
+    root.classList.toggle("dark");
+    localStorage.theme = root.classList.contains("dark") ? "dark" : "light";
+    updateButtonText();
+  });
+
+  // set correct text on page load
+  updateButtonText();
+</script>
+
+
     </nav>
 
     <!-- Mobile buttons (theme + hamburger) -->

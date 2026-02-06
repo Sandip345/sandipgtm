@@ -58,9 +58,23 @@ const experience = defineCollection({
   }),
 });
 
+const blog = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    date: z.string(),
+    tags: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
+  }),
+});
+
+
+
 export const collections = {
   education,
   projects,
   news,
   experience,
+  blog,
 };
