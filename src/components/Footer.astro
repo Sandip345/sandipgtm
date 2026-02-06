@@ -1,46 +1,159 @@
-<footer class="border-t border-slate-200 dark:border-white/10">
-  <div class="mx-auto max-w-5xl px-4 py-10">
-    <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+<footer class="mt-16 border-t border-slate-200/70 bg-white/60 backdrop-blur dark:border-white/10 dark:bg-black/20">
+  <div class="mx-auto max-w-5xl px-4 py-12">
+    <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- Column 1: About -->
+      <div class="space-y-3">
+        <div class="t-mono text-xs font-semibold tracking-wider text-slate-700 dark:text-emerald-400">
+          ABOUT
+        </div>
+        <p class="text-sm text-slate-600 dark:text-[#d7fbe7]/70">
+          Mechanical Engineering M.S. student focused on thermal-fluid systems, CFD, and experimental analysis.
+        </p>
 
-      {/* Left side */}
-      <div class="space-y-2">
-        <div class="t-mono t-meta text-xs">
-          $ echo "Portfolio initialized successfully" <span class="cursor-blink ml-1">|</span>
+        <div class="flex items-center gap-3 pt-2">
+          <!-- Email -->
+          <a
+            href="mailto:sandipgautam787@gmail.com"
+            class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs
+                   text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow
+                   dark:border-white/10 dark:bg-white/5 dark:text-[#d7fbe7]/80 dark:hover:text-emerald-300"
+            aria-label="Email"
+            title="Email"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 6h16v12H4V6Z" stroke="currentColor" stroke-width="2" />
+              <path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            Email
+          </a>
+
+          <!-- Back to top -->
+          <a
+            href="#top"
+            class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs
+                   text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow
+                   dark:border-white/10 dark:bg-white/5 dark:text-[#d7fbe7]/80 dark:hover:text-emerald-300"
+            aria-label="Back to top"
+            title="Back to top"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="m6 11 6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Top
+          </a>
+        </div>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div class="space-y-3">
+        <div class="t-mono text-xs font-semibold tracking-wider text-slate-700 dark:text-emerald-400">
+          QUICK LINKS
         </div>
 
-        <p class="text-sm text-slate-600 dark:text-[#d7fbe7]/70">
-          © {new Date().getFullYear()} Sandip Gautam
-        </p>
+        <div class="flex flex-col gap-2 text-sm">
+          <a class="text-slate-600 hover:text-slate-900 dark:text-[#d7fbe7]/75 dark:hover:text-emerald-300 transition" href="/">
+            Home
+          </a>
+          <a class="text-slate-600 hover:text-slate-900 dark:text-[#d7fbe7]/75 dark:hover:text-emerald-300 transition" href="/experience">
+            Experience
+          </a>
+          <a class="text-slate-600 hover:text-slate-900 dark:text-[#d7fbe7]/75 dark:hover:text-emerald-300 transition" href="/projects">
+            Projects
+          </a>
+          <a class="text-slate-600 hover:text-slate-900 dark:text-[#d7fbe7]/75 dark:hover:text-emerald-300 transition" href="/news">
+            News
+          </a>
+          <a class="text-slate-600 hover:text-slate-900 dark:text-[#d7fbe7]/75 dark:hover:text-emerald-300 transition" href="/blog">
+            Blog
+          </a>
+        </div>
       </div>
 
-      {/* Right side links */}
-      <div class="flex flex-wrap items-center gap-5 text-sm">
-        <a
-          href="mailto:sandipgautam787@gmail.com"
-          class="t-mono text-slate-600 hover:text-slate-900 dark:text-[#d7fbe7]/80 dark:hover:text-emerald-300 transition"
-        >
-          EMAIL
-        </a>
+      <!-- Column 3: Contact -->
+      <div class="space-y-3">
+        <div class="t-mono text-xs font-semibold tracking-wider text-slate-700 dark:text-emerald-400">
+          CONTACT
+        </div>
 
-        <a
-          href="https://github.com/Sandip345"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="t-mono text-slate-600 hover:text-slate-900 dark:text-[#d7fbe7]/80 dark:hover:text-emerald-300 transition"
-        >
-          GITHUB
-        </a>
-
-        <a
-          href="https://www.linkedin.com/in/sg177/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="t-mono text-slate-600 hover:text-slate-900 dark:text-[#d7fbe7]/80 dark:hover:text-emerald-300 transition"
-        >
-          LINKEDIN
-        </a>
+        <div class="space-y-2 text-sm text-slate-600 dark:text-[#d7fbe7]/70">
+          <div class="flex items-center gap-2">
+            <span class="text-slate-500 dark:text-[#d7fbe7]/55">Email:</span>
+            <a
+              href="mailto:sandipgautam787@gmail.com"
+              class="hover:text-slate-900 dark:hover:text-emerald-300 transition"
+            >
+              sandipgautam787@gmail.com
+            </a>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-slate-500 dark:text-[#d7fbe7]/55">Location:</span>
+            <span>Durham, NH</span>
+          </div>
+        </div>
       </div>
 
+      <!-- Column 4: Social -->
+      <div class="space-y-3">
+        <div class="t-mono text-xs font-semibold tracking-wider text-slate-700 dark:text-emerald-400">
+          ONLINE
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <a
+            href="https://github.com/Sandip345"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm
+                   text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow
+                   dark:border-white/10 dark:bg-white/5 dark:text-[#d7fbe7]/80 dark:hover:text-emerald-300"
+          >
+            <span class="inline-flex items-center gap-2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.77.6-3.35-1.33-3.35-1.33-.45-1.15-1.1-1.46-1.1-1.46-.9-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.21-.25-4.54-1.1-4.54-4.91 0-1.08.39-1.97 1.03-2.66-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.8c.85 0 1.7.11 2.5.33 1.9-1.29 2.74-1.02 2.74-1.02.56 1.38.21 2.4.1 2.65.64.69 1.03 1.58 1.03 2.66 0 3.82-2.34 4.65-4.57 4.9.36.31.68.92.68 1.86v2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"
+                  fill="currentColor"
+                  opacity="0.95"
+                />
+              </svg>
+              GitHub
+            </span>
+            <span class="text-xs opacity-70">↗</span>
+          </a>
+
+          <a
+            href="https://www.linkedin.com/in/sg177/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm
+                   text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow
+                   dark:border-white/10 dark:bg-white/5 dark:text-[#d7fbe7]/80 dark:hover:text-emerald-300"
+          >
+            <span class="inline-flex items-center gap-2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M6.94 6.5A2.1 2.1 0 1 1 7 2.3a2.1 2.1 0 0 1-.06 4.2Z" fill="currentColor"/>
+                <path d="M4 21V8h5v13H4Z" fill="currentColor"/>
+                <path
+                  d="M14.5 8c-1.5 0-2.3.82-2.5 1.4V8H7v13h5v-7c0-1.6.35-3 2.3-3 1.9 0 2.2 1.6 2.2 3.1V21h5v-7.8c0-3.6-1.8-5.2-4.9-5.2Z"
+                  fill="currentColor"
+                />
+              </svg>
+              LinkedIn
+            </span>
+            <span class="text-xs opacity-70">↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom line -->
+    <div class="mt-10 flex flex-col gap-2 border-t border-slate-200/70 pt-6 text-sm sm:flex-row sm:items-center sm:justify-between dark:border-white/10">
+      <p class="text-slate-600 dark:text-[#d7fbe7]/70">
+        © {new Date().getFullYear()} Sandip Gautam
+      </p>
+      <p class="t-mono text-xs text-slate-500 dark:text-[#d7fbe7]/55">
+        Last updated: {new Date().toLocaleDateString()}
+      </p>
     </div>
   </div>
 </footer>
