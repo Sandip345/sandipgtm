@@ -34,10 +34,20 @@ const { title, description } = Astro.props;
 
   </head>
 
-  <body class="min-h-screen bg-white text-slate-900 antialiased dark:bg-[#050607] dark:text-[#d7fbe7]">
+  <body class="min-h-screen bg-slate-50 text-slate-900 antialiased dark:bg-[#050607] dark:text-[#d7fbe7]">
+
     <Header />
 
+        <!-- Light-mode subtle glow (keeps sides intentional) -->
+    <div
+      class="pointer-events-none fixed inset-0 -z-10
+             bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.10),transparent_55%)]
+             dark:hidden"
+    ></div>
+
+
     <main class="mx-auto max-w-5xl px-4 py-10">
+
       <slot />
     </main>
 
@@ -77,10 +87,17 @@ const { title, description } = Astro.props;
 
       /* Terminal panel/card */
       :global(.t-card) {
-        background: #ffffff;
-        border: 1px solid rgb(226 232 240);
-        border-radius: 16px;
-      }
+      background: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.75);
+      border-radius: 16px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+    :global(.t-card:hover) {
+      border-color: rgba(203, 213, 225, 0.9);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.10);
+    }
+
       :global(.dark .t-card) {
         background: rgba(15, 20, 24, 0.85);
         border-color: rgba(255,255,255,0.10);
@@ -95,13 +112,15 @@ const { title, description } = Astro.props;
 
       /* Terminal badge (for "Latest News", tags, etc.) */
       :global(.t-badge) {
-        border-radius: 9999px;
-        padding: 0.25rem 0.75rem;
-        font-size: 0.75rem;
-        font-weight: 600;
-        background: rgb(241 245 249);
-        color: rgb(15 23 42);
-      }
+      border-radius: 9999px;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(16,185,129,0.10);   /* emerald tint */
+      color: rgb(6 95 70);                  /* emerald-800-ish */
+      border: 1px solid rgba(16,185,129,0.18);
+    }
+
       :global(.dark .t-badge) {
         background: rgba(34,197,94,0.12);
         color: rgba(134,239,172,0.95);
