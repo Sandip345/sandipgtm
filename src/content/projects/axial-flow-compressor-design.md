@@ -1,12 +1,8 @@
 ---
 title: Axial Flow Compressor Design
 period: Aug 2021 – Nov 2021
-description: Gained hands‑on experience designing and analyzing a subsonic axial
-  flow compressor. Used CATIA V5 to model blade and hub geometry, generated
-  high‑quality meshes with Ansys TurboGrid, and performed CFD simulations in
-  Ansys CFX to evaluate compressor performance metrics such as pressure ratio
-  and efficiency. Learned how blade shape affects flow separation and optimized
-  design parameters to meet target performance.
+description: We gained hands-on experience designing and analyzing a subsonic axial flow compressor. Using CATIA V5, we modeled the blade and hub geometry, generated high-quality meshes with Ansys TurboGrid, and performed CFD simulations in Ansys CFX to evaluate key performance metrics such as pressure ratio and efficiency. Through this process, we developed an understanding of how blade geometry influences flow separation and systematically optimized design parameters to achieve the target performance.
+
 coverImage: "/images/uploads/projects/compressor/compressor_cover.png"
 tags:
   - Compressor design

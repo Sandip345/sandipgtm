@@ -1,11 +1,8 @@
 ---
 title: Aircraft Exhaust Stack Trolley
 period: "2020"
-description: Designed a mobile trolley system to facilitate safe handling and
-  transport of aircraft exhaust stack pipes. Performed structural analysis and
-  ergonomics assessments using CATIA V5 to ensure the trolley could support the
-  required loads while remaining easy to maneuver. Considered manufacturing
-  constraints and proposed a cost‑effective fabrication plan.
+description: We designed a mobile trolley system to facilitate the safe handling and transport of aircraft exhaust stack pipes. The project involved performing structural analysis and ergonomic assessments using CATIA V5 to ensure that the trolley could safely support the required loads while remaining stable and easy to maneuver. We also incorporated manufacturing constraints into the design process and proposed a cost-effective fabrication plan to ensure practical implementation.
+
 coverImage: "/images/uploads/projects/trolley/Trolley.png"
 tags:
   - Mechanical Design
