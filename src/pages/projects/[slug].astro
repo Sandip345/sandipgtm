@@ -9,12 +9,10 @@ export async function getStaticPaths() {
 
 const { p } = Astro.props;
 const { Content } = await p.render();
-
-const cover = p.data.coverImage ?? p.data.cover ?? null; // supports either field
+const cover = p.data.coverImage ?? p.data.cover ?? null;
 ---
 
 <BaseLayout title={`${p.data.title} — Projects`} description={p.data.description}>
-  {/* Centered content column so header + cards align */}
   <div class="mx-auto w-full max-w-4xl space-y-6">
     <a
       href="/projects"
@@ -32,30 +30,29 @@ const cover = p.data.coverImage ?? p.data.cover ?? null; // supports either fiel
         {p.data.title}
       </h1>
 
-      <div class="flex flex-wrap items-center gap-2">
-        {p.data.date ? <span class="t-badge t-mono">{p.data.date}</span> : null}
+      {(p.data.date || p.data.tags?.length) && (
+        <div class="flex flex-wrap items-center gap-2">
+          {p.data.date && <span class="t-badge t-mono">{p.data.date}</span>}
+          {p.data.tags?.length && (
+            <div class="flex flex-wrap gap-2">
+              {p.data.tags.map((t) => (
+                <span class="t-badge t-mono">{t}</span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
-        {p.data.tags?.length ? (
-          <div class="flex flex-wrap gap-2">
-            {p.data.tags.map((t) => (
-              <span class="t-badge t-mono">{t}</span>
-            ))}
-          </div>
-        ) : null}
-      </div>
-
-      {p.data.description ? (
-        <p class="t-muted leading-relaxed">
-          {p.data.description}
-        </p>
-      ) : null}
+      {p.data.description && (
+        <p class="t-muted leading-relaxed">{p.data.description}</p>
+      )}
     </header>
 
-    {cover ? (
+    {cover && (
       <div class="t-card overflow-hidden">
         <img src={cover} alt={p.data.title} class="w-full" loading="lazy" />
       </div>
-    ) : null}
+    )}
 
     <article class="t-card p-6 md:p-8">
       <div class="prose prose-slate max-w-none dark:prose-invert prose-p:text-left prose-p:leading-relaxed prose-p:tracking-[0.01em]">
@@ -65,7 +62,32 @@ const cover = p.data.coverImage ?? p.data.cover ?? null; // supports either fiel
   </div>
 
   <style>
-    /* Improve readability + terminal feel inside prose */
+    /* --- Typography/prose layout fixes (figures + hr) --- */
+    :global(.prose :where(hr)) {
+      margin: 1.25rem 0 !important;
+    }
+
+    :global(.prose :where(figure)) {
+      margin: 1rem 0 !important;
+    }
+
+    /* Remove prose img margins inside figure wrappers */
+    :global(.prose figure :is(img, div)) {
+      margin: 0 !important;
+    }
+
+    /* Center caption consistently */
+    :global(.prose figure figcaption) {
+      margin-top: 0.6rem !important;
+      width: 100% !important;
+      display: flex !important;
+      justify-content: center !important;
+      text-align: center !important;
+      line-height: 1.4 !important;
+      font-style: italic;
+    }
+
+    /* --- Dark prose styling (keep your terminal feel) --- */
     :global(.dark .prose) { color: rgba(215, 251, 231, 0.86); }
     :global(.dark .prose strong) { color: rgba(215, 251, 231, 0.95); }
     :global(.dark .prose a) { color: rgba(110, 231, 183, 0.95); text-decoration: none; }

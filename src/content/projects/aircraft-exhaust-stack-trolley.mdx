@@ -1,11 +1,219 @@
 ---
 title: Aircraft Exhaust Stack Trolley
 period: "2020"
-description: We designed a mobile trolley system to facilitate the safe handling and transport of aircraft exhaust stack pipes. The project involved performing structural analysis and ergonomic assessments using CATIA V5 to ensure that the trolley could safely support the required loads while remaining stable and easy to maneuver. We also incorporated manufacturing constraints into the design process and proposed a cost-effective fabrication plan to ensure practical implementation.
+description: This project involved the conceptualization, structural design, analysis, and cost evaluation of a material-handling trolley intended for safe storage and transportation of aircraft exhaust stack tube pipes. The objective was to design a structurally efficient, manufacturable, and cost-effective trolley capable of securely housing multiple exhaust components while maintaining mobility and operational safety within a laboratory environment.
 
+The work progressed through three major stages: conceptual design comparison, structural evaluation via analytical and numerical methods, and detailed fabrication-oriented modeling.
 coverImage: "/images/uploads/projects/trolley/Trolley.png"
 tags:
   - Mechanical Design
   - CATIA
 ---
-To be added later
+## Design Requirements and Constraints
+The design was governed by functional, structural, manufacturing, and economic constraints.
+
+Key requirements included:
+* Maximum trolley weight below 60 kg
+* Multi-level storage configuration
+* Safe containment of irregularly shaped exhaust pipes
+* Rolling mobility using rubber wheels
+* Welded steel structure for rigidity
+* Compact footprint to minimize laboratory space usage
+The trolley needed to ensure structural integrity under static loading conditions while allowing easy access to stored components.
+
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/trolley/components.png"
+      alt="Velocity Triangle at Rotor Midspan"
+      class="w-full max-w-2xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+     Fig: Aircraft exhaust stack components requiring structured storage.
+  </figcaption>
+</figure>
+
+---
+## Conceptual Design and Option Selection
+Three distinct design configurations were developed and modeled in CATIA:
+* Option A – Simplified open-frame structure
+* Option B – Single-level platform with vertical support
+* Option C – Two-storey reinforced structure with integrated casing
+
+Quantitative comparison (page 7) showed significant variation in mass and material usage:
+* Option A: 108 kg (structurally inefficient)
+* Option B: 45.6 kg (lighter but functionally limited)
+* Option C: 54.5 kg (balanced performance and functionality)
+Qualitative evaluation revealed that Option A suffered from plate distortion under load, 
+while Option B required external fastening mechanisms to secure components. Option C provided firm casing and superior structural behavior.
+
+
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/trolley/design_option_A.png"
+      alt="Velocity Triangle at Rotor Midspan"
+      class="w-full max-w-2xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+     Fig: Design Option A
+  </figcaption>
+</figure>
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/trolley/design_option_B.png"
+      alt="Velocity Triangle at Rotor Midspan"
+      class="w-full max-w-2xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+     Fig: Design Option B
+  </figcaption>
+</figure>
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/trolley/design_option_C.png"
+      alt="Velocity Triangle at Rotor Midspan"
+      class="w-full max-w-2xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+     Fig: Design Option C
+  </figcaption>
+</figure>
+
+---
+## Structural Evaluation and Finite Element Analysis
+
+Finite Element Analysis (FEA) was conducted to evaluate stress distribution and structural performance under applied loading conditions.
+
+### Option Comparison
+* Option A exhibited stress concentration near wheel casings and plate distortion.
+* Option B demonstrated limited load-bearing capacity and higher deformation.
+* Option C successfully withstood applied forces, with stress concentrations localized at welded joints but remaining below material yield strength.
+
+The Von Mises stress distribution confirmed structural adequacy of the selected configuration.
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/trolley/von_mises_A.png"
+      alt="Velocity Triangle at Rotor Midspan"
+      class="w-full max-w-2xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+     Fig: Option A Von Mises Stress
+  </figcaption>
+</figure>
+
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/trolley/von_mises_C.png"
+      alt="Velocity Triangle at Rotor Midspan"
+      class="w-full max-w-2xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+     Fig: Option C Von Mises Stress
+  </figcaption>
+</figure>
+
+---
+## Preliminary Force Analysis
+Member force analysis was conducted on the critical front frame region of the selected design (page 10). Static equilibrium calculations were used to determine internal forces under distributed component loading.
+
+The analysis confirmed that the structural members operated within safe stress limits under expected service loads.
+
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/trolley/front_view.png"
+      alt="Velocity Triangle at Rotor Midspan"
+      class="w-full max-w-2xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+     Fig: Highlighted Portion of Front View
+  </figcaption>
+</figure>
+
+
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/trolley/force.png"
+      alt="Velocity Triangle at Rotor Midspan"
+      class="w-full max-w-2xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+     Fig: Force Analysis on Members
+  </figcaption>
+</figure>
+
+---
+## Stability and Transportability Assessment
+Rotational stability was evaluated by analyzing the position of the center of gravity relative to the wheelbase. The trolley was found to topple only at an incline of approximately 55 degrees (page 11), indicating high resistance to overturning.
+
+Additionally, push-force requirements were calculated using rolling friction analysis. Assuming a rolling friction coefficient of 0.015 and total mass of 54.5 kg, the trolley can be transported on an incline of approximately 12 degrees with an applied force of 120 N, which falls within average human capability.
+
+This analysis demonstrates real-world usability validation.
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/trolley/rotational.png"
+      alt="Velocity Triangle at Rotor Midspan"
+      class="w-full max-w-2xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+     Fig: Rotational Stability in Inclined Surface
+  </figcaption>
+</figure>
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/trolley/transport.png"
+      alt="Velocity Triangle at Rotor Midspan"
+      class="w-full max-w-2xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+     Fig: Transporting Trolley Over Incline Plane
+  </figcaption>
+</figure>
+
+---
+## Deflection and Structural Integrity
+Deflection analysis (page 13) showed negligible deformation under typical service loads. Minor deflection was observed only under exaggerated loading scenarios, confirming structural stiffness and adequacy of truss configuration.
+
+
+## Detailed Design and Manufacturing Considerations
+The final design consists of:
+* Steel rectangular bar frame (45 kg)
+* Aluminum sheet panels (7 kg)
+* Rubber caster wheels
+* Hinged locking mechanism
+
+The design prioritizes welding over bolted joints to improve stress distribution and rigidity.
+
+---
+## Cost Analysis
+Material and component costs were calculated through a Bill of Quantity (page 16). The estimated total manufacturing cost was approximately Rs. 15,840, including fabrication.
+
+This confirms economic feasibility alongside structural adequacy.

@@ -1,11 +1,169 @@
 ---
 title: Bijuli – Powerline Inspection Fixed Wing Battery Powered UAV
 period: Jun 2022 – Jan 2023
-description: In this project, we designed a fixed-wing, battery-powered UAV for power line inspection in Nepal. The project involved preliminary aerodynamic sizing, stability and control analysis, structural considerations, and detailed mission planning. We developed Python scripts to evaluate aerodynamic performance across various flight envelopes, enabling systematic assessment of efficiency and operational feasibility. The work culminated in a comprehensive poster presentation that highlighted the UAV’s technical capabilities and its potential impact on improving the safety, efficiency, and reliability of power line maintenance in remote regions.
+description: This project involved the conceptual design, aerodynamic analysis, and performance evaluation of a fixed-wing unmanned aerial vehicle (UAV) intended for power line inspection in challenging terrain and weather conditions. The aircraft, named Bijuli, was designed to operate in the mountainous environment of Nepal, where long endurance, stable low-speed flight, and reliable imaging capability are critical. The primary objective was to develop a cost-effective battery-powered UAV capable of covering a 50–60 km inspection corridor while maintaining aerodynamic stability, efficient cruise performance, and short takeoff and landing capability.
 coverImage: "/images/uploads/projects/UAV/UAV_cover.png"
 tags:
   - Aerodynamics
   - UAV Design
   - xflr5
 ---
-to be added
+## Design Requirements and Mission Constraints
+The aircraft was designed under the following constraints:
+* Maximum takeoff weight: 8 kg
+* Cruise speed: 18 m/s
+* Range: 50–60 km
+* Cruise altitude: 400 m
+* Electric propulsion system
+* Short-field takeoff and landing capability
+* Maximum camera field of view during cruise
+The mission profile required sustained straight-and-level flight over transmission corridors, with stable imaging and low stall speed to ensure safe maneuvering near infrastructure.
+
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/UAV/mission_profile.png"
+      alt="Velocity Triangle at Rotor Midspan"
+      class="w-full max-w-2xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+      Fig: Mission Profile
+  </figcaption>
+</figure>
+
+---
+## Aerodynamic Configuration and Geometry
+The UAV features a high-wing configuration for enhanced lateral stability and ground clearance. The wing design includes:
+* Wingspan: 2.8 m
+* Aspect ratio: 10
+* Root chord: 0.28 m
+* Tip chord: 0.28 m
+* Zero sweep angle
+* MAC: 0.14 m
+The high aspect ratio improves lift-to-drag ratio, enhancing cruise efficiency and endurance. Zero sweep was selected to simplify construction and maintain predictable stall characteristics.
+
+---
+## Longitudinal Stability and Neutral Point Determination
+
+Static longitudinal stability was evaluated through trim curve analysis and neutral point estimation. The neutral point was determined both experimentally and via XFLR/X-Plane simulation methods. The trim versus lift coefficient curves allowed estimation of aerodynamic center location and stability margin.
+
+The aircraft demonstrated positive static stability with acceptable static margin for safe autonomous flight operations.
+
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/UAV/trim_vs_clmax.png"
+      alt="Velocity Triangle at Rotor Midspan"
+      class="w-full max-w-2xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+      Fig: Trim VS CLmax (X-Plane simulated value)
+  </figcaption>
+</figure>
+
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/UAV/neutral_point.png"
+      alt="Velocity Triangle at Rotor Midspan"
+      class="w-full max-w-2xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+      Fig: Neutral point calculation-experimental value
+  </figcaption>
+</figure>
+
+---
+## Performance Analysis
+Performance metrics were evaluated under steady and climb/descent conditions.
+### Cruise Performance
+* Cruise speed: 18 m/s
+* Lift-to-drag optimized for endurance
+
+### Climb and Descent
+Sawtooth climb and descent maneuvers were analyzed to evaluate rate of climb and sink rate behavior.
+
+### Stall Characteristics
+Stall speed was estimated at approximately 3.23 m/s, ensuring safe low-speed operation during inspection passes.
+
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/UAV/sawtooth_climb.png"
+      alt="Velocity Triangle at Rotor Midspan"
+      class="w-full max-w-2xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+      Fig: True Airspeed vs Climb Rate
+  </figcaption>
+</figure>
+
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/UAV/sawtooth_descent.png"
+      alt="Velocity Triangle at Rotor Midspan"
+      class="w-full max-w-2xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+      Fig: True Airspeed vs Descent Rate
+  </figcaption>
+</figure>
+
+
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/UAV/stall_speed.png"
+      alt="Velocity Triangle at Rotor Midspan"
+      class="w-full max-w-2xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+      Fig: Stall Speed vs Altitude for both KTAS and KCAS
+  </figcaption>
+</figure>
+
+---
+## Dynamic Stability and Handling (Cooper-Harper Evaluation)
+
+Handling qualities were assessed using Cooper-Harper criteria to evaluate pilot workload and controllability. The aircraft demonstrated acceptable handling qualities for semi-autonomous inspection operations.
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/UAV/cooper_harper.png"
+      alt="Velocity Triangle at Rotor Midspan"
+      class="w-full max-w-2xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+      Fig: Handling quality assessment using Cooper-Harper rating scale.
+  </figcaption>
+</figure>
+
+---
+## Propulsion and Field Performance
+The propulsion system included an electric motor rated at 100 HP equivalent power with a 0.4 m diameter propeller and 22-inch pitch. Takeoff distance was estimated at 21.9 m and landing distance at 43.4 m, enabling operation from short improvised runways.
+
+---
+## Technical Significance
+This project demonstrates:
+* Conceptual aircraft design from mission requirements
+* Aerodynamic performance modeling
+* Stability analysis and neutral point estimation
+* Flight envelope and stall characterization
+* Handling quality evaluation
+* Electric propulsion integration
+The final design provides a viable low-cost solution for power line inspection in rugged terrain.
