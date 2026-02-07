@@ -5,4 +5,4 @@ description: I attended and presented my research progress and findings on vorte
 date: August 8, 2025
 location: University of Colorado, Boulder
 ---
-T﻿o be added
+To be added

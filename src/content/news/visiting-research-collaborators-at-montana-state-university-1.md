@@ -4,4 +4,4 @@ description: I traveled to Montana State University to meet with our collaborato
 date: August 3, 2025
 location: Bozeman, Montana, USA
 ---
-T﻿o be added
+To be added

@@ -1,0 +1,134 @@
+---
+title: Axial Flow Compressor Design
+period: Aug 2021 – Nov 2021
+description: This project focused on the aerodynamic design and numerical analysis of a single-stage subsonic axial flow compressor for a target mass flow rate of 8.2 kg/s and a design pressure ratio of 1.2. The study combined analytical mean-line theory, blade geometry development, structured meshing, and steady/transient CFD simulations to evaluate performance and flow physics. The objective was to design a low-aspect-ratio compressor stage without inlet guide vanes and validate its aerodynamic performance through high-fidelity numerical modeling.
+
+coverImage: "/images/uploads/projects/compressor/compressor_cover.png"
+tags:
+  - Compressor design
+  - Ansys CFX
+---
+
+## Design Methodology
+
+The design process began with preliminary mean-line analysis. A Python-based solver was developed to iteratively compute velocity triangles at the midspan by fixing the flow coefficient and loading coefficient. Free vortex radial equilibrium theory was applied to account for spanwise variations in whirl velocity. Using the specified mass flow rate, hub-to-tip ratio, and an assumed aspect ratio of 1.5, key aerodynamic parameters such as blade angles, axial velocity, degree of reaction, and rotor speed were calculated. The resulting rotor speed was approximately 11464 rpm with a tip radius of 0.2 m.
+
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/compressor/vel_triangle.png"
+      alt="Velocity Triangle at Rotor Midspan"
+      class="w-full max-w-2xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+    Velocity triangles at rotor midspan used for preliminary aerodynamic design.
+  </figcaption>
+</figure>
+
+
+Blade geometry was developed by constructing circular camber lines corresponding to the calculated flow angles at the hub, mean, and tip sections. A NACA 65-series airfoil (NACA 651212) was selected and superimposed on these camber lines to achieve an appropriate thickness distribution. The sections were stacked and smoothly blended in CATIA to generate the final three-dimensional blade geometry.
+
+<figure class="my-8">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    
+    <div class="flex justify-center">
+      <img 
+        src="/images/uploads/projects/compressor/rotor_blade.png"
+        alt="Rotor Blade Geometry"
+        class="w-full max-w-md h-80 object-contain rounded-xl shadow-md bg-white p-4"
+      />
+    </div>
+
+    <div class="flex justify-center">
+      <img 
+        src="/images/uploads/projects/compressor/stator_blade.png"
+        alt="Stator Blade Geometry"
+        class="w-full max-w-md h-80 object-contain rounded-xl shadow-md bg-white p-4"
+      />
+    </div>
+
+  </div>
+
+  <figcaption class="text-center text-sm text-gray-500 mt-4">
+    Final 3D rotor and stator blade geometry generated in CATIA.
+  </figcaption>
+</figure>
+
+
+---
+## Numerical Setup
+
+Structured multi-block hexahedral meshes were generated in ANSYS TurboGrid using O–H topology to ensure adequate boundary-layer resolution. The final mesh consisted of approximately 496,000 nodes with near-wall y+ values around 20. A mesh independence study was conducted to confirm solution stability.
+
+CFD simulations were performed in ANSYS CFX using the SST k–ω turbulence model. Both steady RANS simulations with a mixing plane interface and transient URANS simulations using a time transformation model were carried out to capture rotor–stator interaction effects.
+
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/compressor/mesh_topology.png"
+      alt="Structured O–H Topology Mesh"
+      class="w-full max-w-3xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+    Structured O–H topology mesh generated in ANSYS TurboGrid.
+  </figcaption>
+</figure>
+
+---
+## Results
+
+Steady-state simulations predicted a total pressure ratio of approximately 1.12 and an isentropic efficiency near 78 percent. Transient simulations revealed periodic pressure oscillations, with the pressure ratio varying between 1.13 and 1.17 due to blade row interaction. Although slightly below the target pressure ratio of 1.2, the results were achieved without geometric optimization, sweep, lean, or tip clearance modeling, demonstrating strong baseline aerodynamic performance.
+
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/compressor/pressure_contour.png"
+      alt="Pressure Contour"
+      class="w-full max-w-3xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+    Pressure distribution across rotor–stator stage showing compression process.
+  </figcaption>
+</figure>
+
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/compressor/velocity_contour.png"
+      alt="Velocity Contour"
+      class="w-full max-w-3xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+    Contours of absolute and relative velocity across the stage.
+  </figcaption>
+</figure>
+
+<figure class="mt-6 mb-4">
+  <div class="flex justify-center">
+    <img 
+      src="/images/uploads/projects/compressor/streamlines.png"
+      alt="Streamlines"
+      class="w-full max-w-3xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
+    />
+  </div>
+
+  <figcaption class="mt-3 text-center text-sm text-gray-500 italic">
+    Secondary flow structures and passage vortex formation near endwall regions.
+  </figcaption>
+</figure>
+---
+## Flow Physics Observations
+Flow visualization revealed the presence of secondary flows and passage vortices, particularly near endwall regions. The rotor increased the absolute velocity of the flow and imparted kinetic energy, while the stator diffused the flow and converted kinetic energy into static pressure. Spanwise analysis indicated that meridional velocity decreased toward the tip, highlighting deviations from the constant axial velocity assumption used in preliminary design. These findings emphasized the inherently three-dimensional and unsteady nature of axial compressor flow.
+
+---
+## Technical Contributions
+
+This project demonstrates proficiency in turbomachinery aerodynamic design, velocity triangle analysis, free vortex modeling, CAD-based blade generation, structured meshing, RANS and URANS simulation, mesh independence verification, and performance evaluation under realistic engineering constraints.
