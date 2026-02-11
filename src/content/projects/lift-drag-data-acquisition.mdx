@@ -39,8 +39,6 @@ The airfoil tested was a **NACA 0012 symmetric airfoil** with:
 - Span: 0.248 m  
 - Reference area: 0.0116 m²  
 
----
-
 <figure className="mt-6 mb-6">
   <div className="flex justify-center">
     <img 
@@ -50,7 +48,7 @@ The airfoil tested was a **NACA 0012 symmetric airfoil** with:
     />
   </div>
   <figcaption className="mt-3 text-center text-sm text-gray-500 italic">
-    Open-circuit wind tunnel used for aerodynamic testing.
+    Fig: Open-circuit wind tunnel used for aerodynamic testing.
   </figcaption>
 </figure>
 
@@ -73,8 +71,6 @@ Lift = −1.9203 × Voltage − 0.5019
 
 The regression coefficient (R² = 0.9263) confirmed near-linear load cell behavior within the operating range.
 
----
-
 <figure className="mt-6 mb-6">
   <div className="flex justify-center">
     <img 
@@ -84,7 +80,7 @@ The regression coefficient (R² = 0.9263) confirmed near-linear load cell behavi
     />
   </div>
   <figcaption className="mt-3 text-center text-sm text-gray-500 italic">
-    Load cell calibration curve and linear regression fit.
+    Fig: Load cell calibration curve and linear regression fit.
   </figcaption>
 </figure>
 
@@ -100,8 +96,6 @@ The NI SCB-68 shielded connector block enabled analog-to-digital conversion and 
 
 Bias correction was implemented by recording voltage at zero wind speed and subtracting it from loaded measurements.
 
----
-
 <figure className="mt-6 mb-6">
   <div className="flex justify-center">
     <img 
@@ -111,7 +105,7 @@ Bias correction was implemented by recording voltage at zero wind speed and subt
     />
   </div>
   <figcaption className="mt-3 text-center text-sm text-gray-500 italic">
-    NI SCB-68 DAQ system used for signal acquisition and conditioning.
+    Fig: NI SCB-68 DAQ system used for signal acquisition and conditioning.
   </figcaption>
 </figure>
 
@@ -140,18 +134,16 @@ Cl = 0.691 at AOA ≈ 14°
 
 Stall was predicted at approximately 14°.
 
----
-
 <figure className="mt-6 mb-6">
   <div className="flex justify-center">
     <img 
-      src="/images/uploads/projects/daq/streamlines.png"
-      alt="CFD Streamlines"
+      src="/images/uploads/projects/daq/cl_vs_aoa_cfd.png"
+      alt="Lift Coefficient vs AOA"
       className="w-full max-w-3xl h-auto object-contain rounded-xl shadow-md bg-white p-4"
     />
   </div>
   <figcaption className="mt-3 text-center text-sm text-gray-500 italic">
-    CFD streamlines showing pre-stall and post-stall flow separation behavior.
+    Fig: CFD lift coefficient variation with angle of attack.
   </figcaption>
 </figure>
 
@@ -175,8 +167,6 @@ Minor deviation between CFD and experimental results was attributed to:
 - Unknown turbulence intensity  
 - Experimental bias and calibration limitations  
 
----
-
 <figure className="mt-6 mb-6">
   <div className="flex justify-center">
     <img 
@@ -186,7 +176,7 @@ Minor deviation between CFD and experimental results was attributed to:
     />
   </div>
   <figcaption className="mt-3 text-center text-sm text-gray-500 italic">
-    Experimental lift coefficient variation with angle of attack.
+    Fig: Experimental lift coefficient variation with angle of attack.
   </figcaption>
 </figure>
 
