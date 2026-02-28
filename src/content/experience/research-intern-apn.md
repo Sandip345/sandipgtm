@@ -9,8 +9,8 @@ tags:
   - "CATIA"
   - "ANSYS"
 ---
-* Performed preliminary thermal and structural design studies for a thermal vacuum chamber test facility (thermal
-control, insulation concepts, heat leak considerations)
-* Used ANSYS Structural & Thermal to support design feasibility and guide practical design trade-offs
-* Produced clear written reports and presentations; communicated constraints, assumptions, and next-step recommen-
-dations
+* Engineered 900 mm diameter stainless steel thermal vacuum chamber for CubeSat qualification, performing external pressure vessel sizing per ASME Section VIII and optimizing shell thickness to 2 mm for structural efficiency
+* Led structural validation in ANSYS Mechanical, comparing head geometries and selecting a tori-spherical design with 143.98 MPa peak stress and <0.6 mm deformation under full atmospheric loading
+* Designed and integrated 1.4 kW closed-loop heating system with LN2-based cryoshroud cooling; validated thermal performance via steady-state simulation to achieve controlled satellite surface temperatures up to 46°C under vacuum
+
+  
