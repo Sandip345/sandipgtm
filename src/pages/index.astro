@@ -331,7 +331,6 @@ const projects = (featured.length ? featured : sortedProjects).slice(0, 4);
 </section>
 
 
-
   <!-- Experience (text-only) -->
   <section class="mt-12">
     <div class="mb-4 flex items-center justify-between">
@@ -387,40 +386,71 @@ const projects = (featured.length ? featured : sortedProjects).slice(0, 4);
 
   <!-- Projects (max 6) -->
   <section class="mt-12">
-    <div class="mb-4 flex items-end justify-between">
-      <h2 class="text-xs font-semibold tracking-wider text-slate-700 uppercase
-           dark:text-emerald-400">
-  LATEST PROJECTS
-</h2>
+    
+    <div class="mb-4 flex items-center justify-between">
+    <h2 class="text-xs font-semibold tracking-wider text-slate-700 uppercase dark:text-emerald-400">
+      ENGINEERING PROJECTS
+    </h2>
+  </div>
 
-
-      <a href="/projects" class="t-mono t-meta text-xs hover:text-slate-900 dark:hover:text-emerald-300">
-        ALL →
-      </a>
-    </div>
 
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
-      {projects.map((p) => (
-        <a
-          href={`/projects/${p.slug}`}
-          class="t-card block p-5 transition hover:-translate-y-0.5"
-        >
-          <div class="space-y-2">
-            <div class="t-mono t-meta text-xs">
-              {p.data.date ?? p.data.period ?? 'Project'}
-            </div>
+      
+  {projects.map((p) => {
+    const cover = p.data.coverImage ?? p.data.cover ?? null;
 
-            <div class="font-semibold text-slate-900 dark:text-[#d7fbe7]">
-              {p.data.title}
-            </div>
-
-            <p class="t-muted line-clamp-3 text-sm">
-              {p.data.description ?? 'Open to read details.'}
-            </p>
+    return (
+      <a
+        href={`/projects/${p.slug}`}
+        class="t-card group block p-5 transition hover:-translate-y-0.5"
+      >
+        {/* Image Section */}
+        <section class="mb-4">
+          <div class="relative h-44 w-full overflow-hidden rounded-xl bg-slate-100 dark:bg-white/5">
+            {cover ? (
+              <img
+                src={cover}
+                alt={p.data.coverAlt ?? p.data.title}
+                loading="lazy"
+                class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.05]"
+              />
+            ) : (
+              <div class="flex h-full w-full items-center justify-center t-mono t-meta text-xs">
+                No preview
+              </div>
+            )}
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent"></div>
           </div>
-        </a>
-      ))}
-    </div>
+        </section>
+
+        {/* Text Section */}
+        <section class="space-y-2">
+          <div class="t-mono t-meta text-xs">
+            {p.data.date ?? p.data.period ?? 'Project'}
+          </div>
+
+          <div class="font-semibold text-slate-900 dark:text-[#d7fbe7]">
+            {p.data.title}
+          </div>
+
+          {p.data.description2?.length ? (
+        <ul class="mt-2 space-y-1 text-sm text-slate-600 dark:text-slate-300">
+          {p.data.description2.slice(0, 3).map((item) => (
+            <li class="leading-relaxed list-disc ml-4">
+              {item}
+      </li>
+    ))}
+  </ul>
+) : (
+  <p class="t-muted line-clamp-3 text-sm">
+    {p.data.description ?? 'Open to read details.'}
+  </p>
+)}
+        </section>
+      </a>
+    );
+  })}
+</div>
   </section>
 
   <!-- News ticker animation (kept local) -->

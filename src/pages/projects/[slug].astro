@@ -44,8 +44,10 @@ const cover = p.data.coverImage ?? p.data.cover ?? null;
       )}
 
       {p.data.description && (
-        <p class="t-muted leading-relaxed">{p.data.description}</p>
-      )}
+      <p class="t-muted leading-relaxed !line-clamp-none !truncate-none !overflow-visible">
+        {p.data.description}
+      </p>
+    )}
     </header>
 
     {cover && (
