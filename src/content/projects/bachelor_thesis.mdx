@@ -4,11 +4,11 @@ period: Jun 2022 – Mar 2023
 description: "In this project, we designed and fabricated a Particle Image Velocimetry (PIV) setup to study low Reynolds number flow over a flat plate (chord length 76.33 mm) in the range of Re = 2,000–10,000. The system utilized a Class IIIB laser for particle illumination, a Chronos 2.1 high-speed camera, and a smartphone camera for PIV and flow visualization. Velocity fields were obtained through cross-correlation of sequential images using PIVlab (MATLAB). The experimental data were analyzed to identify key flow features such as laminar separation bubbles, reattachment points, turbulent mixing, and trailing-edge vortex shedding. Results were further validated through CFD simulations conducted under similar conditions, and potential sources of experimental and processing errors were systematically evaluated."
 
 description2:
-  - "Designed and fabricated a 40+ component modular PIV system (CATIA, structural FEA) for a 2 m recirculating tank, maintaining <5% blockage ratio and achieving a safety factor ≈15 under hydrostatic loading, enabling reliable low-Re aerodynamic testing."
+  - "Designed and fabricated a 40+ component modular PIV system (CATIA, structural FEA) for a 2 m towing tank, maintaining <5% blockage ratio and achieving a safety factor ≈15 under hydrostatic loading, enabling reliable low-Re aerodynamic testing."
   - "Developed MATLAB-based PIV processing pipeline (FFT cross-correlation, CLAHE, vector validation) to reconstruct velocity and vorticity fields at Re = 2,000–10,000, achieving ±2% velocity measurement uncertainty and resolving laminar separation bubbles and vortex shedding."
   - "Validated experimental results against ANSYS Fluent simulations, demonstrating strong agreement in separation location and velocity trends while systematically quantifying uncertainty sources (illumination, sedimentation, optical distortion)."
 
-  
+
 coverImage: "/images/uploads/projects/PIV/PIV.png"
 tags:
   - Mechanical Design
@@ -16,7 +16,7 @@ tags:
 ---
 ## Engineering Design and Structural Validation
 
-The facility consists of a 2 m recirculating glass tank, a rigid structural frame, and a gantry-driven flat plate actuation mechanism. Blockage ratio constraints were 
+The facility consists of a 2 m glass tank, a rigid structural frame, and a gantry-driven flat plate actuation mechanism. Blockage ratio constraints were 
 imposed to maintain aerodynamic fidelity below 5%, ensuring minimal wall interference on flow development. Structural integrity of the tank under hydrostatic loading 
 was verified using finite element analysis, leading to a 10 mm glass thickness selection with a safety factor of approximately 15.
 The actuation system was powered by a bipolar stepper motor controlled via ESP8266 and L298N driver circuitry, enabling precise velocity control and repeatable Reynolds 
