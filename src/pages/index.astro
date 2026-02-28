@@ -41,11 +41,10 @@ const skills = [
     title: "MECHANICAL PRODUCT DESIGN",
     cmd: "$ cat skills/product-design.txt",
     tags: [
-      "SolidWorks & CATIA V5 (complex parts, large assemblies, drawings)",
-      "GD&T & tolerance stack-up analysis",
-      "Design for Manufacturing (DFM) & Design for Assembly (DFA)",
+      "SolidWorks & CATIA V5 (part, assembly, drafting)",
+      "GD&T considerations",
+      "Design for Manufacturing (DFM)",
       "BOM creation + vendor sourcing + procurement coordination",
-      "Machining-aware design (milling, turning, fabrication constraints)",
       "Test fixtures & experimental rig design",
       "Design iteration from prototype to validated hardware"
     ],
@@ -54,11 +53,8 @@ const skills = [
     title: "STRUCTURAL ANALYSIS (FEA)",
     cmd: "$ cat skills/structural-fea.txt",
     tags: [
-      "ANSYS Mechanical (static structural, modal)",
-      "Boundary conditions & load case definition",
-      "Mesh convergence / mesh independence studies",
-      "Stress, deformation & safety factor evaluation",
-      "Contact modeling & joint behavior",
+      "ANSYS Mechanical (FEA)",
+      "Static and Dynamic Analysis",
       "Failure risk assessment & design refinement"
     ],
   },
@@ -66,12 +62,11 @@ const skills = [
     title: "THERMAL & FLUID ANALYSIS (CFD)",
     cmd: "$ cat skills/thermal-fluid.txt",
     tags: [
-      "ANSYS Fluent (RANS / URANS)",
+      "ANSYS Fluent",
       "Internal & external flow simulations",
-      "Convective heat transfer modeling",
-      "Turbulence modeling & solution controls",
-      "Post-processing of lift/drag & flow fields",
-      "Low-Re experimental validation & scaling analysis"
+      "Heat transfer modeling",
+      "Turbulence modeling",
+      "Experimental Design and Analysis",    
     ],
   },
   {
@@ -80,8 +75,7 @@ const skills = [
     tags: [
       "Experimental setup build & instrumentation integration",
       "Sensor calibration & uncertainty quantification",
-      "MATLAB automation for data reduction",
-      "Python for scientific computing & post-processing",
+      "MATLAB and Python Programming",
       "LabVIEW-based data acquisition",
       "Hardware troubleshooting & iteration under test"
     ],
@@ -143,14 +137,12 @@ const projects = (featured.length ? featured : sortedProjects).slice(0, 4);
      <h1 class="typewriter text-3xl sm:text-4xl font-bold tracking-tight dark:text-emerald-300">
   Hi, I am Sandip<span class="cursor-blink ml-1">|</span>
 </h1>
-      <p class="t-muted text-lg leading-relaxed">
-        <span class="font-medium text-slate-900 dark:text-[#d7fbe7]">
-          Mechanical Engineering M.S. student
-        </span>{' '}
-        specializing in thermal-fluid systems, CFD, and experimental analysis. I translate physical insight into practical
-        design decisions, produce clear technical documentation, and collaborate across teams. Seeking early-career roles
-        in product design, HVAC systems, and thermal-fluid analysis.
-      </p>
+     <p class="t-muted text-lg leading-relaxed">
+  <span class="font-medium text-slate-900 dark:text-[#d7fbe7]">
+    Mechanical Engineering M.S. student
+  </span>{' '}
+  with experience in mechanical design, structural analysis, and thermal-fluid systems. I work across computational and experimental methods to develop, analyze, and validate engineering solutions, produce clear technical documentation, and collaborate effectively within multidisciplinary teams. Seeking early-career roles in product design, HVAC systems, and thermal-fluid engineering.
+</p>
 
       <div class="t-mono t-meta text-xs">
         $ interests: thermal-fluid • HVAC • CFD • experiments

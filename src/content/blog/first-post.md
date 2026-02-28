@@ -1,7 +1,6 @@
 ---
-title: "Understanding SPOD Energy Spectrum"
-description: "Visual explanation of SPOD frequency-energy behavior."
+title: "Coming Soon !"
+description: ""
 date: "2026-02-05"
-tags: ["SPOD", "turbulence"]
+tags: ["", ""]
 ---
-SPOD helps extract coherent structures at specific frequencies.
