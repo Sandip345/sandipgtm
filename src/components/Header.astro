@@ -33,73 +33,86 @@ const nav = [
 
       <span class="mx-1 h-5 w-px bg-slate-200 dark:bg-white/10" />
 
-    <button
-  id="themeToggle"
-  class="t-mono rounded-md border px-3 py-1 text-xs
-         border-slate-300 text-slate-700 hover:bg-slate-100
-         dark:border-emerald-400/30 dark:text-emerald-300 dark:hover:bg-emerald-500/10"
-  aria-label="Toggle theme"
-  title="Toggle theme"
-  type="button"
->
-  ☀️ Light Mode
-</button>
+      <button
+        id="themeToggle"
+        class="t-mono rounded-md border px-3 py-1 text-xs
+               border-slate-300 text-slate-700 hover:bg-slate-100
+               dark:border-emerald-400/30 dark:text-emerald-300 dark:hover:bg-emerald-500/10"
+        aria-label="Toggle theme"
+        title="Toggle theme"
+        type="button"
+      >
+        ☀️ Light Mode
+      </button>
 
-<script>
-  const root = document.documentElement;
+      <script is:inline>
+        const root = document.documentElement;
 
-  const desktopBtn = document.getElementById("themeToggle");         // desktop button
-  const mobileBtn = document.getElementById("themeToggleMobile");    // mobile button
+        const desktopBtn = document.getElementById("themeToggle");
+        const mobileBtn = document.getElementById("themeToggleMobile");
+        const mobileIcon = document.getElementById("themeIconMobile");
 
-  const mobileIcon = document.getElementById("themeIconMobile");     // span inside mobile button
+        function syncThemeUI() {
+          const isDark = root.classList.contains("dark");
 
-  function syncThemeUI() {
-    const isDark = root.classList.contains("dark");
+          if (desktopBtn) {
+            desktopBtn.textContent = isDark ? "🌙 Dark Mode" : "☀️ Light Mode";
+          }
 
-    // Desktop: text button
-    if (desktopBtn) {
-      desktopBtn.textContent = isDark ? "🌙 Dark Mode" : "☀️ Light Mode";
-    }
+          if (mobileIcon) {
+            mobileIcon.textContent = isDark ? "🌙" : "☀️";
+          }
+        }
 
-    // Mobile: icon-only button
-    if (mobileIcon) {
-      mobileIcon.textContent = isDark ? "🌙" : "☀️";
-    }
-  }
+        function toggleThemeWithFade() {
+          const isDark = root.classList.contains("dark");
 
-  function toggleTheme() {
-    root.classList.toggle("dark");
-    localStorage.theme = root.classList.contains("dark") ? "dark" : "light";
-    syncThemeUI();
-  }
+          // Start fade (controlled, smooth)
+          document.body.classList.add("theme-fade");
 
-  desktopBtn?.addEventListener("click", toggleTheme);
-  mobileBtn?.addEventListener("click", toggleTheme);
+          // Switch theme during fade
+          window.setTimeout(() => {
+            if (isDark) {
+              root.classList.remove("dark");
+              localStorage.setItem("theme", "light");
+            } else {
+              root.classList.add("dark");
+              localStorage.setItem("theme", "dark");
+            }
 
-  // Set correct UI on load
-  syncThemeUI();
-</script>
+            syncThemeUI();
 
+            // Fade back in
+            window.setTimeout(() => {
+              document.body.classList.remove("theme-fade");
+            }, 120);
+          }, 70);
+        }
 
+        desktopBtn?.addEventListener("click", toggleThemeWithFade);
+        mobileBtn?.addEventListener("click", toggleThemeWithFade);
+
+        // Ensure correct UI on load
+        syncThemeUI();
+      </script>
     </nav>
 
     <!-- Mobile buttons (theme + hamburger) -->
     <div class="flex items-center gap-2 md:hidden">
       <button
-  id="themeToggleMobile"
-  type="button"
-  class="inline-flex items-center justify-center
-         h-9 w-9 rounded-full
-         border border-slate-300 bg-white
-         text-base
-         shadow-sm transition
-         hover:shadow
-         dark:border-white/10 dark:bg-white/5"
-  aria-label="Toggle theme"
->
-  <span id="themeIconMobile">☀️</span>
-</button>
-
+        id="themeToggleMobile"
+        type="button"
+        class="inline-flex items-center justify-center
+               h-9 w-9 rounded-full
+               border border-slate-300 bg-white
+               text-base
+               shadow-sm transition
+               hover:shadow
+               dark:border-white/10 dark:bg-white/5"
+        aria-label="Toggle theme"
+      >
+        <span id="themeIconMobile">☀️</span>
+      </button>
 
       <button
         id="menuBtn"
@@ -137,7 +150,7 @@ const nav = [
     </div>
   </div>
 
-  <!-- Toggle script -->
+  <!-- Mobile menu toggle script -->
   <script is:inline>
     const btn = document.getElementById("menuBtn");
     const menu = document.getElementById("mobileMenu");
@@ -159,12 +172,10 @@ const nav = [
       isOpen ? closeMenu() : openMenu();
     });
 
-    // Close on Escape
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeMenu();
     });
 
-    // Close when clicking outside
     document.addEventListener("click", (e) => {
       if (!btn || !menu) return;
       const t = e.target;
@@ -173,7 +184,6 @@ const nav = [
       if (isOpen && !inside) closeMenu();
     });
 
-    // Close when clicking a link
     menu?.addEventListener("click", (e) => {
       if (e.target.closest("a")) closeMenu();
     });

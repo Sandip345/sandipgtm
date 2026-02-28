@@ -18,47 +18,42 @@ const { title, description } = Astro.props;
     <title>{title}</title>
     {description ? <meta name="description" content={description} /> : null}
 
-    <!-- Prevent light flash before dark mode loads -->
-    <script>
-  // Default = dark
-  const saved = localStorage.theme;
-
-  if (saved === 'light') {
-    document.documentElement.classList.remove('dark');
-  } else {
-    // saved === 'dark' OR nothing saved => dark
-    document.documentElement.classList.add('dark');
-    if (!saved) localStorage.theme = 'dark';
-  }
-</script>
-
+    <!-- Theme init: default LIGHT, respect saved -->
+    <script is:inline>
+      (() => {
+        try {
+          const saved = localStorage.getItem('theme'); // 'light' | 'dark' | null
+          const theme = saved ?? 'light';              // default light
+          document.documentElement.classList.toggle('dark', theme === 'dark');
+          if (!saved) localStorage.setItem('theme', 'light');
+        } catch (e) {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
   </head>
 
   <body class="min-h-screen bg-slate-50 text-slate-900 antialiased dark:bg-[#050607] dark:text-[#d7fbe7]">
-
     <Header />
 
-        <!-- Light-mode subtle glow (keeps sides intentional) -->
+    <!-- Light-only subtle glow -->
     <div
       class="pointer-events-none fixed inset-0 -z-10
              bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.10),transparent_55%)]
              dark:hidden"
     ></div>
 
-
     <main class="mx-auto max-w-5xl px-4 py-10">
-
       <slot />
     </main>
 
     <Footer />
 
     <style>
-      /* Terminal-style palette (subtle + readable) */
       :global(html) { color-scheme: light dark; }
       :global(body) { transition: background-color .2s ease, color .2s ease; }
 
-      /* Terminal-ish background (very subtle glow + tiny scanlines) */
+      /* Dark background treatment */
       :global(.dark body) {
         background:
           radial-gradient(900px 500px at 20% 0%, rgba(34,197,94,0.12), transparent 60%),
@@ -79,25 +74,24 @@ const { title, description } = Astro.props;
       :global(.dark a) { color: rgba(215,251,231,0.9); }
       :global(.dark a:hover) { color: rgba(34,197,94,0.95); }
 
-      /* Utility classes you can reuse in pages */
-      :global(.t-muted) { color: rgb(71 85 105); }              /* slate-600 light */
-      :global(.t-meta)  { color: rgb(100 116 139); }            /* slate-500 light */
+      /* Text helpers */
+      :global(.t-muted) { color: rgb(71 85 105); }
+      :global(.t-meta)  { color: rgb(100 116 139); }
       :global(.dark .t-muted) { color: rgba(215,251,231,0.72); }
       :global(.dark .t-meta)  { color: rgba(215,251,231,0.55); }
 
-      /* Terminal panel/card */
+      /* Cards */
       :global(.t-card) {
-  background: #ffffff;
-  border: 1px solid rgba(226,232,240,0.75);
-  border-radius: 20px;
-  box-shadow: 0 4px 16px rgba(15,23,42,0.06);
-  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-}
-:global(.t-card:hover) {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 40px rgba(15,23,42,0.12);
-}
-
+        background: #ffffff;
+        border: 1px solid rgba(226,232,240,0.75);
+        border-radius: 20px;
+        box-shadow: 0 4px 16px rgba(15,23,42,0.06);
+        transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+      }
+      :global(.t-card:hover) {
+        transform: translateY(-3px);
+        box-shadow: 0 14px 40px rgba(15,23,42,0.12);
+      }
 
       :global(.dark .t-card) {
         background: rgba(15, 20, 24, 0.85);
@@ -111,84 +105,70 @@ const { title, description } = Astro.props;
           0 18px 50px rgba(0,0,0,0.55);
       }
 
-      /* Terminal badge (for "Latest News", tags, etc.) */
+      /* Badges / chips */
       :global(.t-badge) {
-  border-radius: 9999px;
-  padding: 0.25rem 0.75rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  background: rgba(16,185,129,0.08);   /* emerald tint */
-  color: rgb(6 78 59);                  /* emerald-800-ish */
-  border: 1px solid rgba(16,185,129,0.14);
-}
-
+        border-radius: 9999px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: rgba(16,185,129,0.08);
+        color: rgb(6 78 59);
+        border: 1px solid rgba(16,185,129,0.14);
+      }
       :global(.dark .t-badge) {
         background: rgba(34,197,94,0.12);
         color: rgba(134,239,172,0.95);
         border: 1px solid rgba(34,197,94,0.20);
       }
 
-      /* Monospace accent (use on small labels/buttons only) */
+      /* Monospace utility */
       :global(.t-mono) {
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
           "Liberation Mono", "Courier New", monospace;
         letter-spacing: 0.01em;
       }
 
-      /* Respect reduced motion */
+      /* Cursor blink */
+      :global(.cursor-blink) {
+        display: inline-block;
+        color: #34d399;
+        animation: blink 1s steps(2, start) infinite;
+      }
+      @keyframes blink {
+        0%, 50%, 100% { opacity: 1; }
+        25%, 75% { opacity: 0; }
+      }
+
+      /* Prose media polish */
+      :global(.prose img) {
+        border-radius: 16px;
+        border: 1px solid rgb(226 232 240);
+      }
+      :global(.dark .prose img) {
+        border-color: rgba(255,255,255,0.10);
+        box-shadow: 0 0 0 1px rgba(34,197,94,0.06), 0 18px 50px rgba(0,0,0,0.55);
+        filter: brightness(0.85) contrast(1.05) saturate(0.95);
+      }
+
+      :global(.prose figcaption) {
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        color: rgb(100 116 139);
+      }
+      :global(.dark .prose figcaption) {
+        color: rgba(215,251,231,0.55);
+      }
+
+      /* Dark prose tables */
+      :global(.dark .prose table) { border-color: rgba(255,255,255,0.10); }
+      :global(.dark .prose thead) { border-bottom-color: rgba(255,255,255,0.12); }
+      :global(.dark .prose th) { color: rgba(215,251,231,0.92); }
+      :global(.dark .prose td) { border-color: rgba(255,255,255,0.08); }
+
+      /* Reduced motion */
       @media (prefers-reduced-motion: reduce) {
         :global(*) { scroll-behavior: auto !important; }
       }
-
-      /* Blinking terminal cursor */
-:global(.cursor-blink) {
-  display: inline-block;
-  color: #34d399; /* emerald-400 */
-  animation: blink 1s steps(2, start) infinite;
-}
-
-@keyframes blink {
-  0%, 50%, 100% { opacity: 1; }
-  25%, 75% { opacity: 0; }
-}
-
-/* Prose media polish (terminal style) */
-:global(.prose img) {
-  border-radius: 16px;
-  border: 1px solid rgb(226 232 240);
-}
-
-:global(.dark .prose img) {
-  border-color: rgba(255,255,255,0.10);
-  box-shadow: 0 0 0 1px rgba(34,197,94,0.06), 0 18px 50px rgba(0,0,0,0.55);
-  filter: brightness(0.85) contrast(1.05) saturate(0.95);
-}
-
-/* Captions if you use them */
-:global(.prose figcaption) {
-  margin-top: 0.5rem;
-  font-size: 0.875rem;
-  color: rgb(100 116 139);
-}
-:global(.dark .prose figcaption) {
-  color: rgba(215,251,231,0.55);
-}
-
-/* Tables (optional but very helpful for readability) */
-:global(.dark .prose table) {
-  border-color: rgba(255,255,255,0.10);
-}
-:global(.dark .prose thead) {
-  border-bottom-color: rgba(255,255,255,0.12);
-}
-:global(.dark .prose th) {
-  color: rgba(215,251,231,0.92);
-}
-:global(.dark .prose td) {
-  border-color: rgba(255,255,255,0.08);
-}
-
-
     </style>
   </body>
 </html>
