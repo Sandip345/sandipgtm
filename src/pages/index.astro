@@ -433,18 +433,14 @@ const projects = (featured.length ? featured : sortedProjects).slice(0, 4);
             {p.data.title}
           </div>
 
-          {p.data.description2?.length ? (
-        <ul class="mt-2 space-y-1 text-sm text-slate-600 dark:text-slate-300">
-          {p.data.description2.slice(0, 3).map((item) => (
-            <li class="leading-relaxed list-disc ml-4">
-              {item}
-      </li>
-    ))}
-  </ul>
-) : (
-  <p class="t-muted line-clamp-3 text-sm">
-    {p.data.description ?? 'Open to read details.'}
-  </p>
+          {Array.isArray(p.data.description2) && p.data.description2.length > 0 && (
+  <ul class="mt-3 space-y-3 text-sm text-slate-600 dark:text-slate-300 list-disc pl-5">
+  {p.data.description2.slice(0, 3).map((item, idx) => (
+    <li key={idx} class="leading-6">
+      {item}
+    </li>
+  ))}
+</ul>
 )}
         </section>
       </a>

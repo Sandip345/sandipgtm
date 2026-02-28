@@ -126,9 +126,15 @@ const projects = allProjects
               {p.data.title}
             </h2>
 
-            <p class="t-muted mt-2 text-sm leading-relaxed line-clamp-6">
-            {p.data.description ?? 'Open to read details.'}
-          </p>
+            {Array.isArray(p.data.description2) && p.data.description2.length > 0 && (
+  <ul class="mt-3 space-y-3 text-sm text-slate-600 dark:text-slate-300 list-disc pl-5">
+  {p.data.description2.slice(0, 3).map((item, idx) => (
+    <li key={idx} class="leading-6">
+      {item}
+    </li>
+  ))}
+</ul>
+)}
 
 
             {p.data.tags?.length ? (
