@@ -1,0 +1,199 @@
+---
+const nav = [
+  { href: '/', label: 'Home' },
+  { href: '/experience', label: 'Experience' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/news', label: 'News' },
+  { href: '/blog', label: 'Blog' },
+];
+
+const currentPath = Astro.url.pathname;
+
+function isActive(href: string) {
+  if (href === '/') return currentPath === '/';
+  return currentPath.startsWith(href);
+}
+---
+
+<header
+  class="sticky top-0 z-50 border-b border-slate-200/60 bg-white/80 backdrop-blur-lg
+         dark:border-white/8 dark:bg-[#050607]/80"
+>
+  <div class="mx-auto flex max-w-5xl items-center justify-between px-5 py-3 sm:px-6 lg:px-8">
+    <a
+      href="/"
+      class="group flex items-center gap-2 font-semibold tracking-tight text-slate-900 hover:text-slate-700 dark:text-[#d7fbe7] dark:hover:text-emerald-300"
+    >
+      <span class="t-mono text-[11px] text-slate-400 dark:text-emerald-400/70 transition group-hover:text-emerald-500">~$</span>
+      <span>Sandip Gautam</span>
+    </a>
+
+    <!-- Desktop nav -->
+    <nav aria-label="Primary" class="hidden items-center gap-1 text-sm md:flex">
+      {nav.map((i) => (
+        <a
+          href={i.href}
+          class:list={[
+            'relative rounded-lg px-3 py-1.5 transition-colors',
+            isActive(i.href)
+              ? 'bg-emerald-50 text-emerald-700 font-medium dark:bg-emerald-500/10 dark:text-emerald-300'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-[#cfeedd]/80 dark:hover:bg-white/5 dark:hover:text-emerald-300'
+          ]}
+        >
+          {i.label}
+          {isActive(i.href) && (
+            <span class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-4 rounded-full bg-emerald-500 dark:bg-emerald-400" />
+          )}
+        </a>
+      ))}
+
+      <span class="mx-2 h-5 w-px bg-slate-200 dark:bg-white/10" />
+
+      <button
+        id="themeToggle"
+        class="t-mono inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs
+               border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900
+               dark:border-white/10 dark:text-emerald-300/80 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-300
+               transition"
+        aria-label="Toggle theme"
+        title="Toggle theme"
+        type="button"
+      >
+        <span id="themeIcon">☀️</span>
+        <span id="themeLabel">Light</span>
+      </button>
+
+      <script is:inline>
+        const root = document.documentElement;
+        const desktopBtn = document.getElementById("themeToggle");
+        const desktopIcon = document.getElementById("themeIcon");
+        const desktopLabel = document.getElementById("themeLabel");
+        const mobileBtn = document.getElementById("themeToggleMobile");
+        const mobileIcon = document.getElementById("themeIconMobile");
+
+        function syncThemeUI() {
+          const isDark = root.classList.contains("dark");
+          if (desktopIcon) desktopIcon.textContent = isDark ? "🌙" : "☀️";
+          if (desktopLabel) desktopLabel.textContent = isDark ? "Dark" : "Light";
+          if (mobileIcon) mobileIcon.textContent = isDark ? "🌙" : "☀️";
+        }
+
+        function toggleThemeWithFade() {
+          const isDark = root.classList.contains("dark");
+          document.body.classList.add("theme-fade");
+
+          window.setTimeout(() => {
+            if (isDark) {
+              root.classList.remove("dark");
+              localStorage.setItem("theme", "light");
+            } else {
+              root.classList.add("dark");
+              localStorage.setItem("theme", "dark");
+            }
+            syncThemeUI();
+            window.setTimeout(() => {
+              document.body.classList.remove("theme-fade");
+            }, 120);
+          }, 70);
+        }
+
+        desktopBtn?.addEventListener("click", toggleThemeWithFade);
+        mobileBtn?.addEventListener("click", toggleThemeWithFade);
+        syncThemeUI();
+      </script>
+    </nav>
+
+    <!-- Mobile buttons (theme + hamburger) -->
+    <div class="flex items-center gap-2 md:hidden">
+      <button
+        id="themeToggleMobile"
+        type="button"
+        class="inline-flex items-center justify-center
+               h-9 w-9 rounded-full
+               border border-slate-200 bg-white
+               text-base shadow-sm transition hover:shadow
+               dark:border-white/10 dark:bg-white/5"
+        aria-label="Toggle theme"
+      >
+        <span id="themeIconMobile">☀️</span>
+      </button>
+
+      <button
+        id="menuBtn"
+        class="inline-flex items-center justify-center rounded-lg border border-slate-200 p-2 text-slate-600 hover:bg-slate-100
+               dark:border-white/10 dark:text-emerald-300/80 dark:hover:bg-emerald-500/10 transition"
+        aria-controls="mobileMenu"
+        aria-expanded="false"
+        aria-label="Open menu"
+        type="button"
+      >
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobileMenu" class="hidden md:hidden">
+    <div class="mx-auto max-w-5xl px-5 pb-4 sm:px-6">
+      <div class="rounded-xl border border-slate-200 bg-white/95 p-2 shadow-lg backdrop-blur
+                  dark:border-white/10 dark:bg-[#050607]/95">
+        <nav class="grid gap-1 text-sm">
+          {nav.map((i) => (
+            <a
+              href={i.href}
+              class:list={[
+                'rounded-lg px-3 py-2.5 transition-colors',
+                isActive(i.href)
+                  ? 'bg-emerald-50 text-emerald-700 font-medium dark:bg-emerald-500/10 dark:text-emerald-300'
+                  : 'text-slate-700 hover:bg-slate-100 dark:text-[#cfeedd] dark:hover:bg-white/5 dark:hover:text-emerald-300'
+              ]}
+            >
+              {i.label}
+            </a>
+          ))}
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile menu toggle script -->
+  <script is:inline>
+    const btn = document.getElementById("menuBtn");
+    const menu = document.getElementById("mobileMenu");
+
+    function closeMenu() {
+      menu?.classList.add("hidden");
+      btn?.setAttribute("aria-expanded", "false");
+      btn?.setAttribute("aria-label", "Open menu");
+    }
+
+    function openMenu() {
+      menu?.classList.remove("hidden");
+      btn?.setAttribute("aria-expanded", "true");
+      btn?.setAttribute("aria-label", "Close menu");
+    }
+
+    btn?.addEventListener("click", () => {
+      const isOpen = btn.getAttribute("aria-expanded") === "true";
+      isOpen ? closeMenu() : openMenu();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeMenu();
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!btn || !menu) return;
+      const t = e.target;
+      const isOpen = btn.getAttribute("aria-expanded") === "true";
+      const inside = menu.contains(t) || btn.contains(t);
+      if (isOpen && !inside) closeMenu();
+    });
+
+    menu?.addEventListener("click", (e) => {
+      if (e.target.closest("a")) closeMenu();
+    });
+  </script>
+</header>

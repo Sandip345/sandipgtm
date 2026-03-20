@@ -1,0 +1,111 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+}
+
+const { p } = Astro.props;
+const { Content } = await p.render();
+const cover = p.data.coverImage ?? p.data.cover ?? null;
+---
+
+<BaseLayout title={`${p.data.title} — Projects`} description={p.data.description}>
+  <div class="mx-auto w-full max-w-4xl space-y-6 fade-in-up">
+    <a
+      href="/projects"
+      class="t-mono t-meta inline-flex items-center gap-2 text-xs hover:text-slate-900 dark:hover:text-emerald-300"
+    >
+      <span aria-hidden="true">←</span> BACK TO PROJECTS
+    </a>
+
+    <header class="space-y-3">
+      <div class="t-mono t-meta text-xs">
+        $ cat ./projects/{p.slug}.md <span class="cursor-blink ml-1">|</span>
+      </div>
+
+      <h1 class="text-3xl font-semibold tracking-tight dark:text-emerald-300">
+        {p.data.title}
+      </h1>
+
+      {(p.data.date || p.data.tags?.length) && (
+        <div class="flex flex-wrap items-center gap-2">
+          {p.data.date && <span class="t-badge t-mono">{p.data.date}</span>}
+          {p.data.tags?.length && (
+            <div class="flex flex-wrap gap-2">
+              {p.data.tags.map((t) => (
+                <span class="t-badge t-mono">{t}</span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {p.data.description && (
+      <p class="t-muted leading-relaxed !line-clamp-none !truncate-none !overflow-visible">
+        {p.data.description}
+      </p>
+    )}
+    </header>
+
+    {cover && (
+      <div class="t-card overflow-hidden">
+        <img src={cover} alt={p.data.title} class="w-full" loading="lazy" />
+      </div>
+    )}
+
+    <article class="t-card p-6 md:p-8">
+      <div class="prose prose-slate max-w-none dark:prose-invert prose-p:text-left prose-p:leading-relaxed prose-p:tracking-[0.01em]">
+        <Content />
+      </div>
+    </article>
+  </div>
+
+  <style>
+    /* --- Typography/prose layout fixes (figures + hr) --- */
+    :global(.prose :where(hr)) {
+      margin: 1.25rem 0 !important;
+    }
+
+    :global(.prose :where(figure)) {
+      margin: 1rem 0 !important;
+    }
+
+    /* Remove prose img margins inside figure wrappers */
+    :global(.prose figure :is(img, div)) {
+      margin: 0 !important;
+    }
+
+    /* Center caption consistently */
+    :global(.prose figure figcaption) {
+      margin-top: 0.6rem !important;
+      width: 100% !important;
+      display: flex !important;
+      justify-content: center !important;
+      text-align: center !important;
+      line-height: 1.4 !important;
+      font-style: italic;
+    }
+
+    /* --- Dark prose styling (keep your terminal feel) --- */
+    :global(.dark .prose) { color: rgba(215, 251, 231, 0.86); }
+    :global(.dark .prose strong) { color: rgba(215, 251, 231, 0.95); }
+    :global(.dark .prose a) { color: rgba(110, 231, 183, 0.95); text-decoration: none; }
+    :global(.dark .prose a:hover) { text-decoration: underline; }
+    :global(.dark .prose code) {
+      color: rgba(134, 239, 172, 0.95);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      padding: 0.15rem 0.35rem;
+      border-radius: 0.5rem;
+    }
+    :global(.dark .prose pre) {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+    }
+    :global(.dark .prose hr) { border-color: rgba(255, 255, 255, 0.10); }
+    :global(.dark .prose blockquote) { border-left-color: rgba(34, 197, 94, 0.35); }
+  </style>
+</BaseLayout>

@@ -1,0 +1,512 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allEducation = await getCollection('education');
+const allProjects = await getCollection('projects');
+const allNews = await getCollection('news');
+const allExperiences = await getCollection('experience');
+
+const monthMap = {
+  jan: 1,
+  feb: 2,
+  mar: 3,
+  apr: 4,
+  may: 5,
+  jun: 6,
+  jul: 7,
+  aug: 8,
+  sep: 9,
+  oct: 10,
+  nov: 11,
+  dec: 12,
+};
+
+const toSortableTime = (value) => {
+  const raw = (value ?? '').toString().trim();
+  if (!raw) return 0;
+
+  const iso = raw.match(/^(\d{4})(?:-(\d{2}))?(?:-(\d{2}))?/);
+  if (iso) {
+    return new Date(
+      Number(iso[1]),
+      Number(iso[2] ?? '01') - 1,
+      Number(iso[3] ?? '01')
+    ).getTime();
+  }
+
+  const monthYear = raw.match(
+    /(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+(\d{4})/i
+  );
+  if (monthYear) {
+    return new Date(
+      Number(monthYear[2]),
+      (monthMap[monthYear[1].slice(0, 3).toLowerCase()] ?? 1) - 1,
+      1
+    ).getTime();
+  }
+
+  const yearOnly = raw.match(/(\d{4})/);
+  if (yearOnly) {
+    return new Date(Number(yearOnly[1]), 0, 1).getTime();
+  }
+
+  return 0;
+};
+
+const formatSafeDate = (dateStr) => {
+  if (!dateStr) return '';
+  const d = new Date(`${dateStr}T00:00:00`);
+  if (Number.isNaN(d.getTime())) return dateStr;
+
+  return d.toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+};
+
+// Latest ONE news
+const latestNews = allNews
+  .filter((n) => {
+    const raw = n.data.date ?? '';
+    return raw && !Number.isNaN(new Date(`${raw}T00:00:00`).getTime());
+  })
+  .slice()
+  .sort((a, b) => {
+    const ta = new Date(`${a.data.date}T00:00:00`).getTime();
+    const tb = new Date(`${b.data.date}T00:00:00`).getTime();
+    return tb - ta;
+  })
+  .slice(0, 1);
+
+// Education
+const education = allEducation
+  .slice()
+  .sort((a, b) => {
+    const endDiff = toSortableTime(b.data.end) - toSortableTime(a.data.end);
+    if (endDiff !== 0) return endDiff;
+    return toSortableTime(b.data.start) - toSortableTime(a.data.start);
+  });
+
+// Latest experience
+const experiences = allExperiences
+  .slice()
+  .sort((a, b) => {
+    const startDiff = toSortableTime(b.data.start) - toSortableTime(a.data.start);
+    if (startDiff !== 0) return startDiff;
+    return toSortableTime(b.data.end) - toSortableTime(a.data.end);
+  })
+  .slice(0, 1);
+
+// Skills
+const skills = [
+  {
+    title: "MECHANICAL PRODUCT DESIGN",
+    icon: "⚙️",
+    tags: [
+      "SolidWorks & CATIA V5",
+      "GD&T",
+      "Design for Manufacturing",
+      "BOM & Procurement",
+      "Test Fixtures & Rig Design",
+      "Prototype & Validation"
+    ],
+  },
+  {
+    title: "STRUCTURAL ANALYSIS (FEA)",
+    icon: "🔩",
+    tags: [
+      "ANSYS Mechanical",
+      "Static & Dynamic Analysis",
+      "Stress & Failure Assessment"
+    ],
+  },
+  {
+    title: "THERMAL & FLUID ANALYSIS",
+    icon: "🌊",
+    tags: [
+      "ANSYS Fluent (CFD)",
+      "Internal & External Flows",
+      "Heat Transfer Modeling",
+      "Turbulence Modeling",
+      "Experimental Design & Analysis",
+    ],
+  },
+  {
+    title: "PROTOTYPING, TEST & DATA",
+    icon: "📊",
+    tags: [
+      "Experimental Setup & Instrumentation",
+      "Sensor Calibration & Uncertainty",
+      "MATLAB & Python",
+      "LabVIEW Data Acquisition",
+      "Hardware Troubleshooting"
+    ],
+  },
+];
+
+// Projects - sort and pick featured/latest
+const sortedProjects = allProjects
+  .slice()
+  .sort((a, b) => {
+    const timeDiff =
+      toSortableTime(b.data.date ?? b.data.period) -
+      toSortableTime(a.data.date ?? a.data.period);
+
+    if (timeDiff !== 0) return timeDiff;
+    return (a.data.title ?? '').localeCompare(b.data.title ?? '');
+  });
+
+const featured = sortedProjects.filter((p) => p.data.featured);
+const projects = (featured.length ? featured : sortedProjects).slice(0, 4);
+---
+
+<BaseLayout
+  title="Sandip Gautam – Portfolio"
+>
+  <!-- ═══════════════ HERO ═══════════════ -->
+  <section class="fade-in-up">
+    <div class="flex flex-col-reverse items-center gap-6 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
+      <!-- Left: Text + Buttons -->
+      <div class="flex-1 space-y-5">
+        <div class="space-y-3">
+          <div class="t-mono t-meta text-xs tracking-wide">~/sandip-gautam</div>
+          <h1 class="typewriter text-3xl sm:text-4xl font-bold tracking-tight dark:text-emerald-300">
+            Hi, I am Sandip<span class="cursor-blink ml-0.5">|</span>
+          </h1>
+        </div>
+
+        <p class="t-muted max-w-2xl text-[17px] leading-relaxed">
+          <span class="font-semibold text-slate-900 dark:text-[#d7fbe7]">
+            Mechanical Engineering M.S. student
+          </span>{' '}
+          with experience in mechanical design, structural analysis, and thermal-fluid systems. I work across computational and experimental methods to develop, analyze, and validate engineering solutions.
+        </p>
+
+        <p class="t-muted max-w-2xl text-sm leading-relaxed">
+          Seeking early-career roles in product design, HVAC systems, and thermal-fluid engineering.
+        </p>
+
+        <div class="t-mono t-meta text-xs">
+          $ interests: mechanical design · thermal-fluid · HVAC · CFD · experiments
+        </div>
+
+        <!-- CTA -->
+        <div class="flex flex-wrap items-center gap-3 justify-center sm:justify-start">
+          <a
+            href="/cv/Sandip_Gautam_Grad_Resume.pdf"
+            target="_blank"
+            rel="noopener"
+            class="t-mono inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-xs font-semibold text-white shadow-md hover:bg-slate-800 hover:shadow-lg transition-all dark:bg-emerald-500 dark:text-black dark:hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+            aria-label="View resume PDF"
+          >
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            VIEW RESUME
+          </a>
+
+          <a
+            href="mailto:sandipgautam787@gmail.com"
+            class="t-mono inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 hover:shadow transition-all dark:border-white/12 dark:bg-white/5 dark:text-[#d7fbe7] dark:hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+            aria-label="Email Sandip Gautam"
+          >
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            GET IN TOUCH
+          </a>
+        </div>
+      </div>
+
+      <!-- Right: Photo -->
+          <!-- Right: Photo -->
+    <div class="shrink-0">
+      <div class="relative mx-auto w-fit">
+        <div class="absolute -inset-3 -z-10 rounded-[2rem] bg-gradient-to-br from-emerald-400/25 via-sky-300/10 to-transparent blur-2xl dark:from-emerald-500/20 dark:via-sky-500/10"></div>
+
+        <img
+          src="/images/profile.jpg"
+          alt="Sandip Gautam"
+          width="320"
+          height="320"
+          class="h-40 w-40 rounded-3xl object-cover shadow-xl ring-4 ring-white/80 sm:h-52 sm:w-52 md:h-56 md:w-56 dark:ring-emerald-500/15"
+        />
+
+        <div class="absolute -bottom-2 -right-2 rounded-xl border border-slate-200/80 bg-white/90 px-3 py-1.5 text-[10px] font-medium tracking-wide text-slate-700 shadow-md backdrop-blur dark:border-white/10 dark:bg-slate-900/80 dark:text-emerald-300">
+          M.S. ME
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ LATEST NEWS ═══════════════ -->
+  {latestNews.length ? (
+    <section class="mt-16 fade-in-up delay-1">
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="t-mono text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-emerald-400">
+          LATEST NEWS
+        </h2>
+        <a
+          href="/news"
+          class="t-mono t-meta text-xs hover:text-slate-900 dark:hover:text-emerald-300 transition focus:outline-none focus:ring-2 focus:ring-emerald-400 rounded"
+          aria-label="View all news"
+        >
+          ALL →
+        </a>
+      </div>
+
+      <a
+        href={`/news/${latestNews[0].slug}`}
+        class="t-card block p-6 group focus:outline-none focus:ring-2 focus:ring-emerald-400"
+      >
+        <div class="flex items-start gap-4">
+          <div class="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <div>
+            <div class="font-semibold text-slate-900 dark:text-[#d7fbe7] group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition">
+              {latestNews[0].data.title}
+            </div>
+            {latestNews[0].data.date ? (
+              <div class="mt-1.5 t-mono t-meta text-xs">
+                {formatSafeDate(latestNews[0].data.date)}
+              </div>
+            ) : null}
+          </div>
+        </div>
+      </a>
+    </section>
+  ) : null}
+
+  <!-- ═══════════════ EDUCATION ═══════════════ -->
+  {education.length ? (
+    <section class="mt-16 fade-in-up delay-2">
+      <div class="mb-4">
+        <h2 class="t-mono text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-emerald-400">
+          EDUCATION
+        </h2>
+      </div>
+
+      <div class="space-y-4">
+        {education.map((ed) => (
+          <div class="t-card p-6">
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <div class="t-mono t-meta text-xs">
+                {ed.data.start}{ed.data.end ? ` – ${ed.data.end}` : ''}
+              </div>
+              <span class="text-slate-300 dark:text-white/20">·</span>
+              <div class="t-meta text-xs">
+                <span class="font-semibold text-slate-800 dark:text-[#d7fbe7]">
+                  {ed.data.school}
+                </span>
+                {ed.data.location ? ` — ${ed.data.location}` : ''}
+              </div>
+            </div>
+
+            <div class="mt-2 text-lg font-semibold text-slate-900 dark:text-[#d7fbe7]">
+              {ed.data.degree}
+            </div>
+
+            {ed.data.courses?.length ? (
+              <div class="mt-4">
+                <div class="t-mono t-meta text-[11px] mb-2 tracking-wide">COURSEWORK</div>
+                <div class="flex flex-wrap gap-2">
+                  {ed.data.courses.map((c) => (
+                    <span class="t-badge t-mono">{c}</span>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </div>
+        ))}
+      </div>
+    </section>
+  ) : null}
+
+  <!-- ═══════════════ SKILLS ═══════════════ -->
+  <section class="mt-16 fade-in-up delay-3 skills-wrap">
+    <div class="mb-4">
+      <h2 class="t-mono text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-emerald-400">
+        SKILLS
+      </h2>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      {skills.map((s) => (
+        <div class="t-card p-6 skills-card">
+          <div class="flex items-center gap-2.5">
+            <span class="text-lg" aria-hidden="true">{s.icon}</span>
+            <div class="t-mono text-xs font-semibold tracking-wider text-slate-800 dark:text-[#d7fbe7]">
+              {s.title}
+            </div>
+          </div>
+
+          <div class="mt-4 flex flex-wrap gap-2">
+            {s.tags.map((t) => (
+              <span class="t-badge t-mono skills-chip">{t}</span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <style>
+      .skills-wrap .skills-card {
+        position: relative;
+        overflow: hidden;
+        transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+      }
+
+      .skills-wrap .skills-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.10);
+      }
+
+      :global(.dark) .skills-wrap .skills-card:hover {
+        box-shadow: 0 16px 44px rgba(0, 0, 0, 0.40);
+      }
+
+      .skills-wrap .skills-chip {
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 12px;
+        line-height: 1.2;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .skills-wrap .skills-card,
+        .skills-wrap .skills-chip {
+          transition: none !important;
+        }
+
+        .skills-wrap .skills-card:hover {
+          transform: none !important;
+        }
+      }
+    </style>
+  </section>
+
+  <!-- ═══════════════ EXPERIENCE ═══════════════ -->
+  <section class="mt-16 fade-in-up delay-4">
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="t-mono text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-emerald-400">
+        EXPERIENCE
+      </h2>
+      <a
+        href="/experience"
+        class="t-mono t-meta text-xs hover:text-slate-900 dark:hover:text-emerald-300 transition focus:outline-none focus:ring-2 focus:ring-emerald-400 rounded"
+        aria-label="View all experience"
+      >
+        ALL →
+      </a>
+    </div>
+
+    <div class="space-y-4">
+      {experiences.map((e) => (
+        <a
+          href={`/experience/${e.slug}`}
+          class="t-card group block p-6 transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+        >
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+            <span class="t-mono t-meta text-xs">
+              {(e.data.start ?? '')}{e.data.end ? ` – ${e.data.end}` : ' – Present'}
+            </span>
+            <span class="text-slate-300 dark:text-white/20">·</span>
+            <span class="t-meta text-xs">
+              <span class="font-semibold text-slate-800 dark:text-[#d7fbe7]">
+                {e.data.company}
+              </span>
+              {e.data.location ? ` — ${e.data.location}` : ''}
+            </span>
+          </div>
+
+          <h3 class="mt-2 text-lg font-semibold text-slate-900 dark:text-[#d7fbe7] group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition">
+            {e.data.title}
+          </h3>
+
+          <p class="t-muted mt-2 text-sm leading-relaxed">
+            {e.data.summary ?? 'View details.'}
+          </p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ═══════════════ PROJECTS ═══════════════ -->
+  <section class="mt-16 fade-in-up delay-5">
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="t-mono text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-emerald-400">
+        ENGINEERING PROJECTS
+      </h2>
+      <a
+        href="/projects"
+        class="t-mono t-meta text-xs hover:text-slate-900 dark:hover:text-emerald-300 transition focus:outline-none focus:ring-2 focus:ring-emerald-400 rounded"
+        aria-label="View all projects"
+      >
+        ALL →
+      </a>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      {projects.map((p) => {
+        const cover = p.data.coverImage ?? p.data.cover ?? null;
+        const projectBullets = Array.isArray(p.data.description2) ? p.data.description2.slice(0, 2) : [];
+        const projectFallback = p.data.summary ?? p.data.description ?? null;
+
+        return (
+          <a
+            href={`/projects/${p.slug}`}
+            class="t-card group block overflow-hidden transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          >
+            <!-- Image -->
+            <div class="relative h-48 w-full overflow-hidden bg-slate-100 dark:bg-white/5">
+              {cover ? (
+                <img
+                  src={cover}
+                  alt={p.data.coverAlt ?? p.data.title}
+                  loading="lazy"
+                  class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+                />
+              ) : (
+                <div class="flex h-full w-full items-center justify-center t-mono t-meta text-xs">
+                  No preview
+                </div>
+              )}
+              <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-transparent" />
+            </div>
+
+            <!-- Text -->
+            <div class="p-5 space-y-2">
+              <div class="t-mono t-meta text-[11px]">
+                {p.data.date ?? p.data.period ?? 'Project'}
+              </div>
+
+              <div class="font-semibold text-slate-900 dark:text-[#d7fbe7] group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition leading-snug">
+                {p.data.title}
+              </div>
+
+              {projectBullets.length > 0 ? (
+                <ul class="mt-2 space-y-2 text-sm text-slate-600 dark:text-slate-300 list-disc pl-4">
+                  {projectBullets.map((item, idx) => (
+                    <li key={idx} class="leading-relaxed">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              ) : projectFallback ? (
+                <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                  {projectFallback}
+                </p>
+              ) : null}
+            </div>
+          </a>
+        );
+      })}
+    </div>
+  </section>
+</BaseLayout>
