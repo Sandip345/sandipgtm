@@ -100,9 +100,13 @@ body.theme-fade { opacity: 0.75; }
     transform: none !important;
   }
   .typewriter {
-    animation: none !important;
-    max-width: 100% !important;
-  }
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  vertical-align: top;
+  max-width: 0;
+  animation: typing 1.6s steps(17, end) 0.4s forwards;
+}
   .fade-in-up {
     animation: none !important;
     opacity: 1 !important;
