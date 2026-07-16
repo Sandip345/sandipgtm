@@ -2,124 +2,611 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-const experiences = (await getCollection('experience')).sort((a, b) =>
-  (b.data.start ?? '').localeCompare(a.data.start ?? '')
-);
+const monthMap = {
+  jan: 1,
+  feb: 2,
+  mar: 3,
+  apr: 4,
+  may: 5,
+  jun: 6,
+  jul: 7,
+  aug: 8,
+  sep: 9,
+  oct: 10,
+  nov: 11,
+  dec: 12,
+};
 
-// render markdown bodies for all experiences
+const toSortableTime = (value) => {
+  const raw = (value ?? '').toString().trim();
+  if (!raw) return 0;
+
+  const iso = raw.match(/^(\d{4})(?:-(\d{2}))?(?:-(\d{2}))?/);
+  if (iso) {
+    return new Date(
+      Number(iso[1]),
+      Number(iso[2] ?? '01') - 1,
+      Number(iso[3] ?? '01')
+    ).getTime();
+  }
+
+  const monthYear = raw.match(
+    /(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+(\d{4})/i
+  );
+
+  if (monthYear) {
+    return new Date(
+      Number(monthYear[2]),
+      (monthMap[monthYear[1].slice(0, 3).toLowerCase()] ?? 1) - 1,
+      1
+    ).getTime();
+  }
+
+  const yearOnly = raw.match(/(\d{4})/);
+  if (yearOnly) {
+    return new Date(Number(yearOnly[1]), 0, 1).getTime();
+  }
+
+  return 0;
+};
+
+const experiences = (await getCollection('experience'))
+  .slice()
+  .sort((a, b) => {
+    const startDiff =
+      toSortableTime(b.data.start) - toSortableTime(a.data.start);
+
+    if (startDiff !== 0) return startDiff;
+
+    return toSortableTime(b.data.end) - toSortableTime(a.data.end);
+  });
+
 const rendered = await Promise.all(
-  experiences.map(async (e) => {
-    const { Content } = await e.render();
-    return { e, Content };
+  experiences.map(async (experience) => {
+    const { Content } = await experience.render();
+    return { experience, Content };
   })
 );
 ---
 
-<BaseLayout title="Experience" description="Work and research experience">
-  <div class="mb-8 space-y-2 fade-in-up">
-    <h1 class="text-3xl font-semibold tracking-tight dark:text-emerald-300">
-      Experience
-    </h1>
+<BaseLayout
+  title="Experience"
+  description="Research and professional experience"
+>
+  <!-- ═══════════════ PAGE HEADER ═══════════════ -->
+  <header class="experience-header fade-in-up">
+    <div>
+      <div class="page-eyebrow t-mono">CAREER TIMELINE</div>
 
-    <p class="t-muted text-sm">
-      Research and professional experience.
-    </p>
+      <h1>Experience</h1>
 
-    <div class="t-mono t-meta text-xs">
-      $ cat ./experience/* <span class="cursor-blink ml-1">|</span>
+      <p class="t-muted">
+        Research and professional experience across mechanical design,
+        experimentation, structural analysis, and thermal-fluid engineering.
+      </p>
     </div>
-  </div>
 
-  <!-- Big stacked cards (NOT clickable) -->
-  <div class="space-y-6 fade-in-up delay-1">
-    {rendered.map(({ e, Content }) => (
-      <article class="t-card p-6 md:p-8">
-        <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <div class="t-mono t-meta text-xs">
-            {(e.data.start ?? '')}{e.data.end ? ` - ${e.data.end}` : ' - Present'}
+    <div class="experience-count t-mono" aria-label={`${experiences.length} experience entries`}>
+      <span>{String(experiences.length).padStart(2, '0')}</span>
+      <small>ENTRIES</small>
+    </div>
+  </header>
+
+  <!-- ═══════════════ EXPERIENCE TIMELINE ═══════════════ -->
+  <section class="experience-page-list fade-in-up delay-1">
+    {rendered.map(({ experience, Content }, index) => {
+      const tags = Array.isArray(experience.data.tags)
+        ? experience.data.tags
+        : [];
+
+      const number = String(index + 1).padStart(2, '0');
+
+      return (
+        <article class="experience-page-row">
+          <div class="experience-page-date t-mono">
+            <span>{experience.data.start ?? ''}</span>
+            <span class="date-line">—</span>
+            <span>{experience.data.end ?? 'Present'}</span>
           </div>
 
-          <span class="text-slate-300 dark:text-white/20">•</span>
-
-          <div class="t-meta text-xs">
-            <span class="t-mono font-semibold text-slate-800 dark:text-[#d7fbe7]">
-              {e.data.company}
-            </span>
-            {e.data.location ? ` — ${e.data.location}` : ''}
+          <div class="experience-page-marker" aria-hidden="true">
+            <span></span>
           </div>
-        </div>
 
-        <h2 class="mt-3 text-xl font-semibold text-slate-900 dark:text-[#d7fbe7]">
-          {e.data.title}
-        </h2>
+          <div class="experience-page-content">
+            <div class="experience-topline">
+              <span class="experience-number t-mono">
+                EXPERIENCE {number}
+              </span>
 
-        {e.data.summary ? (
-          <p class="t-muted mt-2 text-sm leading-relaxed">
-            {e.data.summary}
-          </p>
-        ) : null}
+              <span class="experience-status t-mono">
+                {experience.data.end ? 'COMPLETED' : 'CURRENT'}
+              </span>
+            </div>
 
-        {e.data.tags?.length ? (
-          <div class="mt-4 flex flex-wrap gap-2">
-            {e.data.tags.map((t) => (
-              <span class="t-badge t-mono">{t}</span>
-            ))}
+            <h2>{experience.data.title}</h2>
+
+            <p class="experience-organization">
+              <strong>{experience.data.company}</strong>
+
+              {experience.data.location ? (
+                <>
+                  <span class="organization-divider">—</span>
+                  <span>{experience.data.location}</span>
+                </>
+              ) : null}
+            </p>
+
+            {experience.data.summary ? (
+              <p class="experience-intro">
+                {experience.data.summary}
+              </p>
+            ) : null}
+
+            {tags.length ? (
+              <div class="experience-tags" aria-label="Technologies and skills">
+                {tags.map((tag, tagIndex) => (
+                  <>
+                    <span>{tag}</span>
+                    {tagIndex < tags.length - 1 ? (
+                      <span class="tag-separator" aria-hidden="true">·</span>
+                    ) : null}
+                  </>
+                ))}
+              </div>
+            ) : null}
+
+            <details class="experience-details">
+              <summary class="t-mono">
+                <span class="summary-closed">VIEW DETAILS</span>
+                <span class="summary-open">HIDE DETAILS</span>
+                <span class="summary-icon" aria-hidden="true">+</span>
+              </summary>
+
+              <div class="experience-details-body">
+                <div class="prose prose-slate max-w-none dark:prose-invert">
+                  <Content />
+                </div>
+              </div>
+            </details>
           </div>
-        ) : null}
-
-        {/* Optional: collapse long details (remove <details> wrapper if you want always-open) */}
-        <details class="mt-6">
-          <summary class="t-mono t-meta cursor-pointer select-none text-xs hover:text-slate-900 dark:hover:text-emerald-300">
-            VIEW DETAILS
-          </summary>
-
-          <div class="prose prose-slate mt-4 max-w-none dark:prose-invert">
-            <Content />
-          </div>
-        </details>
-      </article>
-    ))}
-  </div>
+        </article>
+      );
+    })}
+  </section>
 
   <style>
-    /* Make <details> summary look nice */
+    /* ══════════════════════════════════════════
+       PAGE HEADER
+       ══════════════════════════════════════════ */
+
+    .experience-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 3rem;
+      padding: 1.5rem 0 2rem;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.28);
+    }
+
+    .page-eyebrow {
+      margin-bottom: 0.7rem;
+      color: #10b981;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.11em;
+    }
+
+    .experience-header h1 {
+      margin: 0;
+      color: #0f172a;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 750;
+      line-height: 1.1;
+      letter-spacing: -0.035em;
+    }
+
+    .experience-header p {
+      max-width: 43rem;
+      margin: 0.85rem 0 0;
+      font-size: 0.94rem;
+      line-height: 1.75;
+    }
+
+    .experience-count {
+      display: flex;
+      min-width: 5rem;
+      flex-direction: column;
+      align-items: flex-end;
+      color: #64748b;
+    }
+
+    .experience-count span {
+      color: #0f172a;
+      font-size: 1.8rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .experience-count small {
+      margin-top: 0.35rem;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+    }
+
+    /* ══════════════════════════════════════════
+       EXPERIENCE TIMELINE
+       ══════════════════════════════════════════ */
+
+    .experience-page-list {
+      position: relative;
+    }
+
+    .experience-page-row {
+      display: grid;
+      grid-template-columns: 8.6rem 1.15rem minmax(0, 1fr);
+      gap: 1.15rem;
+      padding: 3rem 0;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .experience-page-date {
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      gap: 0.15rem 0.4rem;
+      padding-top: 0.25rem;
+      color: #059669;
+      font-size: 0.68rem;
+      line-height: 1.65;
+    }
+
+    .date-line {
+      color: #94a3b8;
+    }
+
+    .experience-page-marker {
+      position: relative;
+      display: flex;
+      justify-content: center;
+    }
+
+    .experience-page-marker::after {
+      content: "";
+      position: absolute;
+      top: 0.75rem;
+      bottom: -3rem;
+      left: 50%;
+      width: 1px;
+      background: linear-gradient(
+        to bottom,
+        rgba(16, 185, 129, 0.75),
+        rgba(148, 163, 184, 0.26)
+      );
+      transform: translateX(-50%);
+    }
+
+    .experience-page-row:last-child .experience-page-marker::after {
+      bottom: 0;
+    }
+
+    .experience-page-marker > span {
+      position: relative;
+      z-index: 1;
+      width: 0.82rem;
+      height: 0.82rem;
+      margin-top: 0.25rem;
+      border: 2px solid #6ee7b7;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+    }
+
+    .experience-page-content {
+      min-width: 0;
+    }
+
+    .experience-topline {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .experience-number {
+      color: #059669;
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+
+    .experience-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.38rem;
+      color: #64748b;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+    }
+
+    .experience-status::before {
+      content: "";
+      width: 0.38rem;
+      height: 0.38rem;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    .experience-page-content h2 {
+      margin: 0;
+      color: #0f172a;
+      font-size: clamp(1.35rem, 2.3vw, 1.85rem);
+      font-weight: 750;
+      line-height: 1.35;
+      letter-spacing: -0.025em;
+    }
+
+    .experience-organization {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      margin: 0.45rem 0 0;
+      color: #64748b;
+      font-size: 0.8rem;
+      line-height: 1.6;
+    }
+
+    .experience-organization strong {
+      color: #334155;
+      font-weight: 700;
+    }
+
+    .organization-divider {
+      color: #94a3b8;
+    }
+
+    .experience-intro {
+      max-width: 55rem;
+      margin: 1.2rem 0 0;
+      color: #475569;
+      font-size: 0.9rem;
+      line-height: 1.8;
+    }
+
+    /* Plain text skills, not badge buttons */
+
+    .experience-tags {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.1rem 0.38rem;
+      margin-top: 1.1rem;
+      color: #64748b;
+      font-size: 0.72rem;
+      line-height: 1.7;
+    }
+
+    .tag-separator {
+      color: #10b981;
+    }
+
+    /* Details */
+
+    .experience-details {
+      margin-top: 1.5rem;
+      border-top: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .experience-details summary {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 0 0;
+      color: #64748b;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      user-select: none;
+      transition: color 160ms ease;
+    }
+
+    .experience-details summary:hover {
+      color: #059669;
+    }
+
+    .summary-open {
+      display: none;
+    }
+
+    .summary-icon {
+      color: #10b981;
+      font-size: 1rem;
+      line-height: 1;
+      transition: transform 180ms ease;
+    }
+
+    .experience-details[open] .summary-closed {
+      display: none;
+    }
+
+    .experience-details[open] .summary-open {
+      display: inline;
+    }
+
+    .experience-details[open] .summary-icon {
+      transform: rotate(45deg);
+    }
+
+    .experience-details-body {
+      padding-top: 1rem;
+    }
+
     :global(details > summary) {
       list-style: none;
     }
+
     :global(details > summary::-webkit-details-marker) {
       display: none;
     }
 
-    /* Prose readability tweaks (match projects/slug styling) */
-    :global(.dark .prose) {
-      color: rgba(215, 251, 231, 0.86);
+    :global(.experience-details-body .prose) {
+      color: #475569;
+      font-size: 0.88rem;
+      line-height: 1.8;
     }
-    :global(.dark .prose strong) {
-      color: rgba(215, 251, 231, 0.95);
+
+    :global(.experience-details-body .prose ul) {
+      margin-top: 0.75rem;
+      padding-left: 0;
+      list-style: none;
     }
-    :global(.dark .prose a) {
-      color: rgba(110, 231, 183, 0.95);
+
+    :global(.experience-details-body .prose li) {
+      position: relative;
+      margin-top: 0.5rem;
+      padding-left: 1rem;
+    }
+
+    :global(.experience-details-body .prose li::before) {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: #10b981;
+    }
+
+    :global(.experience-details-body .prose strong) {
+      color: #334155;
+    }
+
+    :global(.experience-details-body .prose a) {
+      color: #059669;
       text-decoration: none;
     }
-    :global(.dark .prose a:hover) {
+
+    :global(.experience-details-body .prose a:hover) {
       text-decoration: underline;
     }
-    :global(.dark .prose code) {
-      color: rgba(134, 239, 172, 0.95);
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.10);
+
+    /* Dark mode */
+
+    :global(.dark) .experience-header {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    :global(.dark) .experience-header h1,
+    :global(.dark) .experience-count span,
+    :global(.dark) .experience-page-content h2 {
+      color: #d7fbe7;
+    }
+
+    :global(.dark) .experience-page-row,
+    :global(.dark) .experience-details {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    :global(.dark) .experience-organization,
+    :global(.dark) .experience-intro,
+    :global(.dark) .experience-tags,
+    :global(.dark) .experience-details summary,
+    :global(.dark) .experience-count {
+      color: #94a3b8;
+    }
+
+    :global(.dark) .experience-organization strong,
+    :global(.dark .experience-details-body .prose strong) {
+      color: #e2e8f0;
+    }
+
+    :global(.dark .experience-details-body .prose) {
+      color: rgba(215, 251, 231, 0.86);
+    }
+
+    :global(.dark .experience-details-body .prose a) {
+      color: rgba(110, 231, 183, 0.95);
+    }
+
+    :global(.dark .experience-details-body .prose code) {
       padding: 0.15rem 0.35rem;
-      border-radius: 0.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.4rem;
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(134, 239, 172, 0.95);
     }
-    :global(.dark .prose pre) {
+
+    :global(.dark .experience-details-body .prose pre) {
+      border: 1px solid rgba(255, 255, 255, 0.1);
       background: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.10);
     }
-    :global(.dark .prose hr) {
-      border-color: rgba(255, 255, 255, 0.10);
+
+    /* Responsive */
+
+    @media (max-width: 760px) {
+      .experience-header {
+        align-items: flex-start;
+      }
+
+      .experience-count {
+        min-width: auto;
+      }
+
+      .experience-page-row {
+        grid-template-columns: 0.9rem minmax(0, 1fr);
+        gap: 0.8rem;
+        padding: 2.4rem 0;
+      }
+
+      .experience-page-date {
+        grid-column: 2;
+        grid-row: 1;
+        padding: 0;
+      }
+
+      .experience-page-marker {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+      }
+
+      .experience-page-marker::after {
+        bottom: -2.4rem;
+      }
+
+      .experience-page-content {
+        grid-column: 2;
+        grid-row: 2;
+      }
     }
-    :global(.dark .prose blockquote) {
-      border-left-color: rgba(34, 197, 94, 0.35);
+
+    @media (max-width: 520px) {
+      .experience-header {
+        display: block;
+      }
+
+      .experience-count {
+        display: none;
+      }
+
+      .experience-header p {
+        font-size: 0.86rem;
+      }
+
+      .experience-page-content h2 {
+        font-size: 1.25rem;
+      }
+
+      .experience-organization {
+        display: block;
+      }
+
+      .organization-divider {
+        margin: 0 0.2rem;
+      }
     }
   </style>
 </BaseLayout>

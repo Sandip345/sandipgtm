@@ -10,175 +10,316 @@ const nav = [
 const currentPath = Astro.url.pathname;
 
 function isActive(href: string) {
-  if (href === '/') return currentPath === '/';
-  return currentPath.startsWith(href);
+  if (href === '/') {
+    return currentPath === '/';
+  }
+
+  return (
+    currentPath === href ||
+    currentPath.startsWith(`${href}/`)
+  );
 }
 ---
 
-<header class="sticky top-0 z-50 relative border-b border-slate-200/60 bg-white/80 backdrop-blur-lg dark:border-white/8 dark:bg-[#050607]/80">  <div class="mx-auto flex max-w-5xl items-center justify-between px-5 py-3 sm:px-6 lg:px-8">
+<header
+  id="siteHeader"
+  class="site-header sticky top-0 z-50"
+>
+  <div class="mx-auto flex max-w-5xl items-center justify-between px-5 py-3 sm:px-6 lg:px-8">
+    <!-- Logo -->
     <a
       href="/"
-      class="group flex items-center gap-2 font-semibold tracking-tight text-slate-900 hover:text-slate-700 dark:text-[#d7fbe7] dark:hover:text-emerald-300"
+      class="site-logo group flex items-center gap-2 font-semibold tracking-tight focus:outline-none focus:ring-2 focus:ring-emerald-400"
+      aria-label="Sandip Gautam homepage"
     >
-      <span class="t-mono text-[11px] text-slate-400 dark:text-emerald-400/70 transition group-hover:text-emerald-500">~$</span>
-      <span>Sandip Gautam</span>
+      <span
+        class="t-mono text-[11px] text-slate-400 transition group-hover:text-emerald-500 dark:text-emerald-400/70"
+        aria-hidden="true"
+      >
+        ~$
+      </span>
+
+      <span class="text-slate-900 transition group-hover:text-slate-700 dark:text-[#d7fbe7] dark:group-hover:text-emerald-300">
+        Sandip Gautam
+      </span>
     </a>
 
-    <!-- Desktop nav -->
-    <nav aria-label="Primary" class="hidden items-center gap-1 text-sm md:flex">
-      {nav.map((i) => (
-        <a
-          href={i.href}
-          class:list={[
-            'relative rounded-lg px-3 py-1.5 transition-colors',
-            isActive(i.href)
-              ? 'bg-emerald-50 text-emerald-700 font-medium dark:bg-emerald-500/10 dark:text-emerald-300'
-              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-[#cfeedd]/80 dark:hover:bg-white/5 dark:hover:text-emerald-300'
-          ]}
-        >
-          {i.label}
-          {isActive(i.href) && (
-            <span class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-4 rounded-full bg-emerald-500 dark:bg-emerald-400" />
-          )}
-        </a>
-      ))}
+    <!-- Desktop navigation -->
+    <nav
+      aria-label="Primary navigation"
+      class="hidden items-center gap-1 text-sm md:flex"
+    >
+      {nav.map((item) => {
+        const active = isActive(item.href);
 
-      <span class="mx-2 h-5 w-px bg-slate-200 dark:bg-white/10" />
+        return (
+          <a
+            href={item.href}
+            aria-current={active ? 'page' : undefined}
+            class:list={[
+              'nav-link relative rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-400',
+              active
+                ? 'bg-emerald-50 font-medium text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-[#cfeedd]/80 dark:hover:bg-white/5 dark:hover:text-emerald-300',
+            ]}
+          >
+            {item.label}
 
+            {active ? (
+              <span
+                class="absolute bottom-0 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-full bg-emerald-500 dark:bg-emerald-400"
+                aria-hidden="true"
+              ></span>
+            ) : null}
+          </a>
+        );
+      })}
+
+      <span
+        class="mx-2 h-5 w-px bg-slate-200 dark:bg-white/10"
+        aria-hidden="true"
+      ></span>
+
+      <!-- Desktop theme toggle -->
       <button
         id="themeToggle"
-        class="t-mono inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs
-               border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900
-               dark:border-white/10 dark:text-emerald-300/80 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-300
-               transition"
-        aria-label="Toggle theme"
-        title="Toggle theme"
         type="button"
+        class="t-mono inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-600 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-400 dark:border-white/10 dark:text-emerald-300/80 dark:hover:border-emerald-400/20 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-300"
+        aria-label="Switch to dark theme"
+        title="Switch theme"
       >
-        <span id="themeIcon">☀️</span>
+        <span id="themeIcon" aria-hidden="true">☀️</span>
         <span id="themeLabel">Light</span>
       </button>
     </nav>
 
-    <!-- Mobile buttons -->
+    <!-- Mobile controls -->
     <div class="flex items-center gap-2 md:hidden">
+      <!-- Mobile theme toggle -->
       <button
         id="themeToggleMobile"
         type="button"
-        class="inline-flex items-center justify-center h-9 w-9 rounded-full
-               border border-slate-200 bg-white text-base shadow-sm transition hover:shadow
-               dark:border-white/10 dark:bg-white/5"
-        aria-label="Toggle theme"
-        title="Toggle theme"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-base shadow-sm transition hover:border-slate-300 hover:shadow focus:outline-none focus:ring-2 focus:ring-emerald-400 dark:border-white/10 dark:bg-white/5 dark:hover:border-emerald-400/20 dark:hover:bg-emerald-500/10"
+        aria-label="Switch to dark theme"
+        title="Switch theme"
       >
-        <span id="themeIconMobile">☀️</span>
+        <span id="themeIconMobile" aria-hidden="true">☀️</span>
       </button>
 
+      <!-- Mobile menu button -->
       <button
         id="menuBtn"
-        class="inline-flex items-center justify-center rounded-lg border border-slate-200 p-2 text-slate-600 hover:bg-slate-100
-               dark:border-white/10 dark:text-emerald-300/80 dark:hover:bg-emerald-500/10 transition"
+        type="button"
+        class="menu-button inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-slate-300 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-400 dark:border-white/10 dark:text-emerald-300/80 dark:hover:border-emerald-400/20 dark:hover:bg-emerald-500/10"
         aria-controls="mobileMenu"
         aria-expanded="false"
-        aria-label="Open menu"
-        type="button"
+        aria-label="Open navigation menu"
       >
-        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-        </svg>
+        <span class="menu-lines" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
       </button>
     </div>
   </div>
 
-  <!-- Mobile menu -->
+  <!-- Mobile navigation menu -->
   <div
-  id="mobileMenu"
-  class="hidden absolute right-3 top-full z-40 w-[calc(100%-1.5rem)] max-w-sm md:hidden">
-  <div class="mx-auto max-w-5xl px-3 pt-2 sm:px-6">
-      <div
-  class="rounded-2xl border border-slate-200/40 
-         bg-white/30 backdrop-blur-xl 
-         shadow-xl p-2
-         dark:border-white/10 dark:bg-[#050607]/70"
->
-        <nav class="grid gap-1 text-sm">
-          {nav.map((i) => (
-            <a
-              href={i.href}
-              class:list={[
-                'rounded-lg px-3 py-2.5 transition-colors',
-                isActive(i.href)
-                  ? 'bg-emerald-50 text-emerald-700 font-medium dark:bg-emerald-500/10 dark:text-emerald-300'
-                  : 'text-slate-700 hover:bg-slate-100 dark:text-[#cfeedd] dark:hover:bg-white/5 dark:hover:text-emerald-300'
-              ]}
-            >
-              {i.label}
-            </a>
-          ))}
+    id="mobileMenu"
+    class="mobile-menu pointer-events-none absolute right-3 top-full z-40 w-[calc(100%-1.5rem)] max-w-sm translate-y-[-0.5rem] opacity-0 md:hidden"
+    aria-hidden="true"
+  >
+    <div class="px-3 pt-2 sm:px-6">
+      <div class="rounded-2xl border border-slate-200/60 bg-white/90 p-2 shadow-xl backdrop-blur-xl dark:border-white/10 dark:bg-[#080a0b]/92">
+        <nav
+          class="grid gap-1 text-sm"
+          aria-label="Mobile navigation"
+        >
+          {nav.map((item) => {
+            const active = isActive(item.href);
+
+            return (
+              <a
+                href={item.href}
+                aria-current={active ? 'page' : undefined}
+                class:list={[
+                  'rounded-lg px-3 py-2.5 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400',
+                  active
+                    ? 'bg-emerald-50 font-medium text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300'
+                    : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:text-[#cfeedd] dark:hover:bg-white/5 dark:hover:text-emerald-300',
+                ]}
+              >
+                <span class="flex items-center justify-between gap-3">
+                  <span>{item.label}</span>
+
+                  {active ? (
+                    <span
+                      class="h-1.5 w-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400"
+                      aria-hidden="true"
+                    ></span>
+                  ) : null}
+                </span>
+              </a>
+            );
+          })}
         </nav>
       </div>
     </div>
   </div>
 
   <script is:inline>
-    document.addEventListener("DOMContentLoaded", () => {
+    function initializeHeader() {
+      const header = document.getElementById('siteHeader');
+
+      if (!header || header.dataset.initialized === 'true') {
+        return;
+      }
+
+      header.dataset.initialized = 'true';
+
       const root = document.documentElement;
 
-      const desktopBtn = document.getElementById("themeToggle");
-      const desktopIcon = document.getElementById("themeIcon");
-      const desktopLabel = document.getElementById("themeLabel");
+      const desktopThemeButton =
+        document.getElementById('themeToggle');
 
-      const mobileBtn = document.getElementById("themeToggleMobile");
-      const mobileIcon = document.getElementById("themeIconMobile");
+      const desktopThemeIcon =
+        document.getElementById('themeIcon');
 
-      const menuBtn = document.getElementById("menuBtn");
-      const mobileMenu = document.getElementById("mobileMenu");
+      const desktopThemeLabel =
+        document.getElementById('themeLabel');
+
+      const mobileThemeButton =
+        document.getElementById('themeToggleMobile');
+
+      const mobileThemeIcon =
+        document.getElementById('themeIconMobile');
+
+      const menuButton =
+        document.getElementById('menuBtn');
+
+      const mobileMenu =
+        document.getElementById('mobileMenu');
+
+      function updateHeaderOnScroll() {
+        header.classList.toggle(
+          'is-scrolled',
+          window.scrollY > 12
+        );
+      }
 
       function syncThemeUI() {
-        const isDark = root.classList.contains("dark");
-        if (desktopIcon) desktopIcon.textContent = isDark ? "🌙" : "☀️";
-        if (desktopLabel) desktopLabel.textContent = isDark ? "Dark" : "Light";
-        if (mobileIcon) mobileIcon.textContent = isDark ? "🌙" : "☀️";
+        const isDark = root.classList.contains('dark');
+
+        if (desktopThemeIcon) {
+          desktopThemeIcon.textContent = isDark ? '🌙' : '☀️';
+        }
+
+        if (desktopThemeLabel) {
+          desktopThemeLabel.textContent = isDark
+            ? 'Dark'
+            : 'Light';
+        }
+
+        if (mobileThemeIcon) {
+          mobileThemeIcon.textContent = isDark
+            ? '🌙'
+            : '☀️';
+        }
+
+        const nextTheme = isDark ? 'light' : 'dark';
+        const accessibleLabel =
+          `Switch to ${nextTheme} theme`;
+
+        desktopThemeButton?.setAttribute(
+          'aria-label',
+          accessibleLabel
+        );
+
+        desktopThemeButton?.setAttribute(
+          'title',
+          accessibleLabel
+        );
+
+        mobileThemeButton?.setAttribute(
+          'aria-label',
+          accessibleLabel
+        );
+
+        mobileThemeButton?.setAttribute(
+          'title',
+          accessibleLabel
+        );
       }
 
       function toggleThemeWithFade() {
-        const isDark = root.classList.contains("dark");
-        document.body.classList.add("theme-fade");
+        const currentlyDark =
+          root.classList.contains('dark');
+
+        document.body.classList.add('theme-fade');
 
         window.setTimeout(() => {
-          if (isDark) {
-            root.classList.remove("dark");
-            localStorage.setItem("theme", "light");
-          } else {
-            root.classList.add("dark");
-            localStorage.setItem("theme", "dark");
-          }
+          const nextTheme = currentlyDark
+            ? 'light'
+            : 'dark';
+
+          root.classList.toggle(
+            'dark',
+            nextTheme === 'dark'
+          );
+
+          localStorage.setItem(
+            'theme',
+            nextTheme
+          );
 
           syncThemeUI();
 
           window.setTimeout(() => {
-            document.body.classList.remove("theme-fade");
+            document.body.classList.remove(
+              'theme-fade'
+            );
           }, 120);
         }, 70);
       }
 
-      function closeMenu() {
-        if (!mobileMenu || !menuBtn) return;
-        mobileMenu.classList.add("hidden");
-        menuBtn.setAttribute("aria-expanded", "false");
-        menuBtn.setAttribute("aria-label", "Open menu");
+      function openMenu() {
+        if (!mobileMenu || !menuButton) {
+          return;
+        }
+
+        mobileMenu.classList.add('is-open');
+        mobileMenu.setAttribute('aria-hidden', 'false');
+
+        menuButton.classList.add('is-open');
+        menuButton.setAttribute('aria-expanded', 'true');
+        menuButton.setAttribute(
+          'aria-label',
+          'Close navigation menu'
+        );
       }
 
-      function openMenu() {
-        if (!mobileMenu || !menuBtn) return;
-        mobileMenu.classList.remove("hidden");
-        menuBtn.setAttribute("aria-expanded", "true");
-        menuBtn.setAttribute("aria-label", "Close menu");
+      function closeMenu() {
+        if (!mobileMenu || !menuButton) {
+          return;
+        }
+
+        mobileMenu.classList.remove('is-open');
+        mobileMenu.setAttribute('aria-hidden', 'true');
+
+        menuButton.classList.remove('is-open');
+        menuButton.setAttribute('aria-expanded', 'false');
+        menuButton.setAttribute(
+          'aria-label',
+          'Open navigation menu'
+        );
       }
 
       function toggleMenu() {
-        if (!menuBtn) return;
-        const isOpen = menuBtn.getAttribute("aria-expanded") === "true";
+        const isOpen =
+          menuButton?.getAttribute('aria-expanded') ===
+          'true';
+
         if (isOpen) {
           closeMenu();
         } else {
@@ -186,36 +327,199 @@ function isActive(href: string) {
         }
       }
 
-      desktopBtn?.addEventListener("click", toggleThemeWithFade);
-      mobileBtn?.addEventListener("click", toggleThemeWithFade);
-      menuBtn?.addEventListener("click", toggleMenu);
+      desktopThemeButton?.addEventListener(
+        'click',
+        toggleThemeWithFade
+      );
 
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") closeMenu();
-      });
+      mobileThemeButton?.addEventListener(
+        'click',
+        toggleThemeWithFade
+      );
 
-      document.addEventListener("click", (e) => {
-        if (!menuBtn || !mobileMenu) return;
-        const target = e.target;
-        if (!(target instanceof Node)) return;
+      menuButton?.addEventListener(
+        'click',
+        toggleMenu
+      );
 
-        const isOpen = menuBtn.getAttribute("aria-expanded") === "true";
-        const insideMenu = mobileMenu.contains(target);
-        const insideButton = menuBtn.contains(target);
+      window.addEventListener(
+        'scroll',
+        updateHeaderOnScroll,
+        { passive: true }
+      );
 
-        if (isOpen && !insideMenu && !insideButton) {
+      window.addEventListener('resize', () => {
+        if (window.innerWidth >= 768) {
           closeMenu();
         }
       });
 
-      mobileMenu?.addEventListener("click", (e) => {
-        const target = e.target;
-        if (target instanceof Element && target.closest("a")) {
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
           closeMenu();
         }
       });
 
+      document.addEventListener('click', (event) => {
+        if (!mobileMenu || !menuButton) {
+          return;
+        }
+
+        const target = event.target;
+
+        if (!(target instanceof Node)) {
+          return;
+        }
+
+        const isOpen =
+          menuButton.getAttribute('aria-expanded') ===
+          'true';
+
+        const clickedInsideMenu =
+          mobileMenu.contains(target);
+
+        const clickedMenuButton =
+          menuButton.contains(target);
+
+        if (
+          isOpen &&
+          !clickedInsideMenu &&
+          !clickedMenuButton
+        ) {
+          closeMenu();
+        }
+      });
+
+      mobileMenu?.addEventListener('click', (event) => {
+        const target = event.target;
+
+        if (
+          target instanceof Element &&
+          target.closest('a')
+        ) {
+          closeMenu();
+        }
+      });
+
+      updateHeaderOnScroll();
       syncThemeUI();
-    });
+    }
+
+    document.addEventListener(
+      'DOMContentLoaded',
+      initializeHeader
+    );
+
+    document.addEventListener(
+      'astro:page-load',
+      initializeHeader
+    );
+
+    if (document.readyState !== 'loading') {
+      initializeHeader();
+    }
   </script>
+
+  <style>
+    .site-header {
+      position: sticky;
+      border-bottom: 1px solid transparent;
+      background: rgba(255, 255, 255, 0.42);
+      backdrop-filter: blur(8px);
+      transition:
+        background-color 220ms ease,
+        border-color 220ms ease,
+        box-shadow 220ms ease,
+        backdrop-filter 220ms ease;
+    }
+
+    .site-header.is-scrolled {
+      border-bottom-color: rgba(148, 163, 184, 0.28);
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: 0 8px 30px rgba(15, 23, 42, 0.055);
+      backdrop-filter: blur(16px);
+    }
+
+    :global(.dark) .site-header {
+      background: rgba(5, 6, 7, 0.38);
+    }
+
+    :global(.dark) .site-header.is-scrolled {
+      border-bottom-color: rgba(255, 255, 255, 0.08);
+      background: rgba(5, 6, 7, 0.82);
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.28);
+    }
+
+    .site-logo {
+      border-radius: 0.45rem;
+    }
+
+    .nav-link {
+      transition:
+        color 160ms ease,
+        background-color 160ms ease;
+    }
+
+    .mobile-menu {
+      visibility: hidden;
+      transition:
+        opacity 170ms ease,
+        transform 170ms ease,
+        visibility 170ms ease;
+    }
+
+    .mobile-menu.is-open {
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .menu-lines {
+      position: relative;
+      display: flex;
+      width: 1.15rem;
+      height: 0.9rem;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .menu-lines span {
+      display: block;
+      width: 100%;
+      height: 2px;
+      border-radius: 999px;
+      background: currentColor;
+      transform-origin: center;
+      transition:
+        transform 180ms ease,
+        opacity 180ms ease;
+    }
+
+    .menu-button.is-open .menu-lines span:nth-child(1) {
+      transform: translateY(0.4rem) rotate(45deg);
+    }
+
+    .menu-button.is-open .menu-lines span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .menu-button.is-open .menu-lines span:nth-child(3) {
+      transform: translateY(-0.4rem) rotate(-45deg);
+    }
+
+    :global(body.theme-fade) {
+      opacity: 0.78;
+      transition: opacity 120ms ease;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .site-header,
+      .mobile-menu,
+      .menu-lines span,
+      :global(body.theme-fade) {
+        transition: none;
+      }
+    }
+  </style>
 </header>

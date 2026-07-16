@@ -1,135 +1,459 @@
-<footer class="mt-20 border-t border-slate-200/70 bg-slate-50/80 backdrop-blur dark:border-white/8 dark:bg-[#050607]/60">
-  <div class="mx-auto max-w-5xl px-5 py-14 sm:px-6 lg:px-8">
-    <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-      <!-- Column 1: About -->
+<footer class="site-footer mt-14 border-t border-slate-200/70 bg-slate-50/80 backdrop-blur dark:border-white/8 dark:bg-[#050607]/60">
+  <div class="mx-auto max-w-5xl px-5 py-10 sm:px-6 sm:py-12 lg:px-8">
+    <div class="grid gap-9 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
+      <!-- About -->
       <div class="space-y-3">
-        <div class="t-mono text-[11px] font-semibold tracking-wider text-slate-500 dark:text-emerald-400">
+        <div class="footer-heading t-mono">
           ABOUT
         </div>
-        <p class="text-sm leading-relaxed text-slate-600 dark:text-[#d7fbe7]/70">
-          Mechanical Engineering M.S. student focused on thermal-fluid systems, CFD, and experimental analysis.
+
+        <p class="footer-copy">
+          Mechanical Engineering M.S. student working across mechanical
+          design, thermal-fluid systems, CFD, and experimental analysis.
         </p>
 
-        <div class="flex items-center gap-2 pt-2">
+        <div class="flex flex-wrap items-center gap-2 pt-1">
           <a
             href="mailto:sandipgautam787@gmail.com"
-            class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs
-                   text-slate-600 shadow-sm transition hover:-translate-y-0.5 hover:shadow
-                   dark:border-white/10 dark:bg-white/5 dark:text-[#d7fbe7]/80 dark:hover:text-emerald-300"
-            aria-label="Email"
+            class="footer-small-button"
+            aria-label="Email Sandip Gautam"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M4 6h16v12H4V6Z" stroke="currentColor" stroke-width="2" />
-              <path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M4 6h16v12H4V6Z"
+                stroke="currentColor"
+                stroke-width="2"
+              />
+
+              <path
+                d="m4 7 8 6 8-6"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
             </svg>
+
             Email
           </a>
 
           <a
             href="#top"
-            class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs
-                   text-slate-600 shadow-sm transition hover:-translate-y-0.5 hover:shadow
-                   dark:border-white/10 dark:bg-white/5 dark:text-[#d7fbe7]/80 dark:hover:text-emerald-300"
+            class="footer-small-button"
             aria-label="Back to top"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M12 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="m6 11 6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 5v14"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+
+              <path
+                d="m6 11 6-6 6 6"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
             </svg>
+
             Top
           </a>
         </div>
       </div>
 
-      <!-- Column 2: Quick Links -->
+      <!-- Quick links -->
       <div class="space-y-3">
-        <div class="t-mono text-[11px] font-semibold tracking-wider text-slate-500 dark:text-emerald-400">
+        <div class="footer-heading t-mono">
           QUICK LINKS
         </div>
-        <div class="flex flex-col gap-2 text-sm">
-          <a class="text-slate-600 hover:text-slate-900 dark:text-[#d7fbe7]/75 dark:hover:text-emerald-300 transition" href="/">Home</a>
-          <a class="text-slate-600 hover:text-slate-900 dark:text-[#d7fbe7]/75 dark:hover:text-emerald-300 transition" href="/experience">Experience</a>
-          <a class="text-slate-600 hover:text-slate-900 dark:text-[#d7fbe7]/75 dark:hover:text-emerald-300 transition" href="/projects">Projects</a>
-          <a class="text-slate-600 hover:text-slate-900 dark:text-[#d7fbe7]/75 dark:hover:text-emerald-300 transition" href="/news">News</a>
-          <a class="text-slate-600 hover:text-slate-900 dark:text-[#d7fbe7]/75 dark:hover:text-emerald-300 transition" href="/blog">Blog</a>
-        </div>
+
+        <nav
+          class="flex flex-col gap-2 text-sm"
+          aria-label="Footer navigation"
+        >
+          <a class="footer-link" href="/">Home</a>
+          <a class="footer-link" href="/experience">Experience</a>
+          <a class="footer-link" href="/projects">Projects</a>
+          <a class="footer-link" href="/news">News</a>
+          <a class="footer-link" href="/blog">Blog</a>
+        </nav>
       </div>
 
-      <!-- Column 3: Contact -->
+      <!-- Contact -->
       <div class="space-y-3">
-        <div class="t-mono text-[11px] font-semibold tracking-wider text-slate-500 dark:text-emerald-400">
+        <div class="footer-heading t-mono">
           CONTACT
         </div>
-        <div class="space-y-2 text-sm text-slate-600 dark:text-[#d7fbe7]/70">
-          <div class="flex items-center gap-2">
-            <span class="text-slate-400 dark:text-[#d7fbe7]/45">Email:</span>
-            <a href="mailto:sandipgautam787@gmail.com" class="hover:text-slate-900 dark:hover:text-emerald-300 transition">
+
+        <div class="space-y-2.5 text-sm">
+          <div class="footer-contact-row">
+            <span class="footer-contact-label">Email</span>
+
+            <a
+              href="mailto:sandipgautam787@gmail.com"
+              class="footer-contact-value"
+            >
               sandipgautam787@gmail.com
             </a>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="text-slate-400 dark:text-[#d7fbe7]/45">Location:</span>
-            <span>Durham, NH</span>
+
+          <div class="footer-contact-row">
+            <span class="footer-contact-label">Location</span>
+
+            <span class="footer-contact-value">
+              Durham, NH
+            </span>
           </div>
         </div>
       </div>
 
-      <!-- Column 4: Social -->
+      <!-- Online -->
       <div class="space-y-3">
-        <div class="t-mono text-[11px] font-semibold tracking-wider text-slate-500 dark:text-emerald-400">
+        <div class="footer-heading t-mono">
           ONLINE
         </div>
-        <div class="flex flex-col gap-3">
+
+        <div class="flex flex-col gap-2.5">
           <a
             href="https://github.com/sandipgtm"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm
-                   text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow
-                   dark:border-white/10 dark:bg-white/5 dark:text-[#d7fbe7]/80 dark:hover:text-emerald-300"
+            class="footer-social-link group"
+            aria-label="Visit Sandip Gautam on GitHub"
           >
-            <span class="inline-flex items-center gap-2">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <span class="inline-flex items-center gap-2.5">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
                 <path
                   d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.77.6-3.35-1.33-3.35-1.33-.45-1.15-1.1-1.46-1.1-1.46-.9-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.21-.25-4.54-1.1-4.54-4.91 0-1.08.39-1.97 1.03-2.66-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.8c.85 0 1.7.11 2.5.33 1.9-1.29 2.74-1.02 2.74-1.02.56 1.38.21 2.4.1 2.65.64.69 1.03 1.58 1.03 2.66 0 3.82-2.34 4.65-4.57 4.9.36.31.68.92.68 1.86v2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"
-                  fill="currentColor" opacity="0.95"
+                  fill="currentColor"
                 />
               </svg>
+
               GitHub
             </span>
-            <span class="text-xs opacity-50">↗</span>
+
+            <span
+              class="footer-social-arrow"
+              aria-hidden="true"
+            >
+              ↗
+            </span>
           </a>
 
           <a
             href="https://www.linkedin.com/in/sg177/"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm
-                   text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow
-                   dark:border-white/10 dark:bg-white/5 dark:text-[#d7fbe7]/80 dark:hover:text-emerald-300"
+            class="footer-social-link group"
+            aria-label="Visit Sandip Gautam on LinkedIn"
           >
-            <span class="inline-flex items-center gap-2">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M6.94 6.5A2.1 2.1 0 1 1 7 2.3a2.1 2.1 0 0 1-.06 4.2Z" fill="currentColor"/>
-                <path d="M4 21V8h5v13H4Z" fill="currentColor"/>
-                <path d="M14.5 8c-1.5 0-2.3.82-2.5 1.4V8H7v13h5v-7c0-1.6.35-3 2.3-3 1.9 0 2.2 1.6 2.2 3.1V21h5v-7.8c0-3.6-1.8-5.2-4.9-5.2Z" fill="currentColor" />
+            <span class="inline-flex items-center gap-2.5">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M6.94 6.5A2.1 2.1 0 1 1 7 2.3a2.1 2.1 0 0 1-.06 4.2Z"
+                  fill="currentColor"
+                />
+
+                <path
+                  d="M4 21V8h5v13H4Z"
+                  fill="currentColor"
+                />
+
+                <path
+                  d="M14.5 8c-1.5 0-2.3.82-2.5 1.4V8H7v13h5v-7c0-1.6.35-3 2.3-3 1.9 0 2.2 1.6 2.2 3.1V21h5v-7.8c0-3.6-1.8-5.2-4.9-5.2Z"
+                  fill="currentColor"
+                />
               </svg>
+
               LinkedIn
             </span>
-            <span class="text-xs opacity-50">↗</span>
+
+            <span
+              class="footer-social-arrow"
+              aria-hidden="true"
+            >
+              ↗
+            </span>
           </a>
         </div>
       </div>
     </div>
 
-    <!-- Bottom line -->
-    <div class="mt-10 flex flex-col gap-2 border-t border-slate-200/70 pt-6 text-sm sm:flex-row sm:items-center sm:justify-between dark:border-white/8">
-      <p class="text-slate-500 dark:text-[#d7fbe7]/55">
+    <!-- Bottom row -->
+    <div class="footer-bottom">
+      <p>
         © {new Date().getFullYear()} Sandip Gautam
       </p>
-      <p class="t-mono text-xs text-slate-400 dark:text-[#d7fbe7]/40">
+
+      <p class="footer-built t-mono">
         Built with Astro + Tailwind
       </p>
     </div>
   </div>
+
+  <style>
+    .site-footer {
+      color: #475569;
+    }
+
+    .footer-heading {
+      color: #64748b;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+
+    .footer-copy {
+      max-width: 18rem;
+      margin: 0;
+      color: #64748b;
+      font-size: 0.84rem;
+      line-height: 1.75;
+    }
+
+    .footer-small-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      min-height: 2.15rem;
+      padding: 0.4rem 0.75rem;
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.7);
+      color: #64748b;
+      font-size: 0.7rem;
+      text-decoration: none;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+      transition:
+        color 160ms ease,
+        border-color 160ms ease,
+        background-color 160ms ease,
+        transform 160ms ease;
+    }
+
+    .footer-small-button:hover {
+      border-color: rgba(16, 185, 129, 0.35);
+      background: #fff;
+      color: #059669;
+      transform: translateY(-1px);
+    }
+
+    .footer-link {
+      width: fit-content;
+      color: #64748b;
+      text-decoration: none;
+      transition:
+        color 160ms ease,
+        transform 160ms ease;
+    }
+
+    .footer-link:hover {
+      color: #0f172a;
+      transform: translateX(2px);
+    }
+
+    .footer-contact-row {
+      display: grid;
+      grid-template-columns: 4rem minmax(0, 1fr);
+      gap: 0.5rem;
+      align-items: baseline;
+    }
+
+    .footer-contact-label {
+      color: #94a3b8;
+      font-size: 0.76rem;
+    }
+
+    .footer-contact-value {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      color: #64748b;
+      font-size: 0.8rem;
+      text-decoration: none;
+    }
+
+    a.footer-contact-value:hover {
+      color: #059669;
+    }
+
+    .footer-social-link {
+      display: inline-flex;
+      min-height: 3.15rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 0.9rem;
+      background: rgba(255, 255, 255, 0.68);
+      color: #475569;
+      font-size: 0.82rem;
+      text-decoration: none;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.035);
+      transition:
+        color 160ms ease,
+        border-color 160ms ease,
+        background-color 160ms ease,
+        transform 160ms ease,
+        box-shadow 160ms ease;
+    }
+
+    .footer-social-link:hover {
+      border-color: rgba(16, 185, 129, 0.3);
+      background: #fff;
+      color: #059669;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+      transform: translateY(-1px);
+    }
+
+    .footer-social-arrow {
+      color: #94a3b8;
+      font-size: 0.7rem;
+      transition:
+        color 160ms ease,
+        transform 160ms ease;
+    }
+
+    .footer-social-link:hover .footer-social-arrow {
+      color: #10b981;
+      transform: translate(2px, -2px);
+    }
+
+    .footer-bottom {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 2.5rem;
+      padding-top: 1.4rem;
+      border-top: 1px solid rgba(148, 163, 184, 0.25);
+      color: #64748b;
+      font-size: 0.75rem;
+    }
+
+    .footer-bottom p {
+      margin: 0;
+    }
+
+    .footer-built {
+      color: #94a3b8;
+      font-size: 0.66rem;
+      opacity: 0.55;
+    }
+
+    /* Dark mode */
+
+    :global(.dark) .site-footer {
+      color: #9ca7b4;
+    }
+
+    :global(.dark) .footer-heading {
+      color: #34d399;
+    }
+
+    :global(.dark) .footer-copy,
+    :global(.dark) .footer-link,
+    :global(.dark) .footer-contact-value,
+    :global(.dark) .footer-bottom {
+      color: #9ca7b4;
+    }
+
+    :global(.dark) .footer-contact-label,
+    :global(.dark) .footer-built {
+      color: #718096;
+    }
+
+    :global(.dark) .footer-link:hover,
+    :global(.dark) a.footer-contact-value:hover {
+      color: #d7fbe7;
+    }
+
+    :global(.dark) .footer-small-button {
+      border-color: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      color: #aeb8c4;
+      box-shadow: none;
+    }
+
+    :global(.dark) .footer-small-button:hover {
+      border-color: rgba(52, 211, 153, 0.28);
+      background: rgba(16, 185, 129, 0.07);
+      color: #d7fbe7;
+    }
+
+    :global(.dark) .footer-social-link {
+      border-color: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.035);
+      color: #aeb8c4;
+      box-shadow: none;
+    }
+
+    :global(.dark) .footer-social-link:hover {
+      border-color: rgba(52, 211, 153, 0.28);
+      background: rgba(16, 185, 129, 0.065);
+      color: #d7fbe7;
+      box-shadow: none;
+    }
+
+    :global(.dark) .footer-bottom {
+      border-color: rgba(255, 255, 255, 0.09);
+    }
+
+    @media (min-width: 640px) {
+      .footer-bottom {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    @media (max-width: 639px) {
+      .site-footer {
+        margin-top: 3rem;
+      }
+
+      .footer-copy {
+        max-width: 27rem;
+      }
+
+      .footer-social-link {
+        max-width: 22rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .footer-small-button,
+      .footer-link,
+      .footer-contact-value,
+      .footer-social-link,
+      .footer-social-arrow {
+        transition: none;
+      }
+    }
+  </style>
 </footer>

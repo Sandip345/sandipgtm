@@ -4,154 +4,581 @@ import { getCollection } from 'astro:content';
 
 const allProjects = await getCollection('projects');
 
+const monthMap = {
+  jan: 1,
+  feb: 2,
+  mar: 3,
+  apr: 4,
+  may: 5,
+  jun: 6,
+  jul: 7,
+  aug: 8,
+  sep: 9,
+  oct: 10,
+  nov: 11,
+  dec: 12,
+};
+
 /**
  * Convert a project's date/period string into a sortable timestamp.
- * Supports:
- *  - date: "2024-08-15", "2024-08", "2024"
- *  - date: "Aug 2024", "August 2024"
- *  - period: "2020", "2020-2021", "2020–2021", "Fall 2023"
- * If nothing usable, returns 0 (goes last).
+ * Supports ISO dates, month/year values, year ranges, and standalone years.
  */
-const toSortableTime = (p) => {
-  const raw = (p.data.date ?? p.data.period ?? '').toString().trim();
+const toSortableTime = (project) => {
+  const raw = (
+    project.data.date ??
+    project.data.period ??
+    ''
+  ).toString().trim();
+
   if (!raw) return 0;
 
-  // 1) ISO-like: YYYY, YYYY-MM, YYYY-MM-DD
   const iso = raw.match(/^(\d{4})(?:-(\d{2}))?(?:-(\d{2}))?/);
+
   if (iso) {
-    const y = Number(iso[1]);
-    const m = Number(iso[2] ?? '01');
-    const d = Number(iso[3] ?? '01');
-    return new Date(y, m - 1, d).getTime();
+    return new Date(
+      Number(iso[1]),
+      Number(iso[2] ?? '01') - 1,
+      Number(iso[3] ?? '01')
+    ).getTime();
   }
 
-  // 2) Month name + year: "Aug 2024", "August 2024"
-  const my = raw.match(
+  const monthYear = raw.match(
     /(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\s+(\d{4})/i
   );
-  if (my) {
-    const key = my[1].slice(0, 3).toLowerCase();
-    const months = {
-      jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6,
-      jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12,
-    };
-    const mon = months[key] ?? 1;
-    const y = Number(my[2]);
-    return new Date(y, mon - 1, 1).getTime();
+
+  if (monthYear) {
+    const month = monthMap[monthYear[1].slice(0, 3).toLowerCase()] ?? 1;
+
+    return new Date(
+      Number(monthYear[2]),
+      month - 1,
+      1
+    ).getTime();
   }
 
-  // 3) Year range like "2020-2021" or "2020–2021" -> use END year as "latest"
   const range = raw.match(/(\d{4})\s*[-–—]\s*(\d{4})/);
+
   if (range) {
-    const endYear = Number(range[2]);
-    return new Date(endYear, 0, 1).getTime();
+    return new Date(Number(range[2]), 0, 1).getTime();
   }
 
-  // 4) Any single year anywhere (e.g., "Fall 2023", "2020")
-  const yOnly = raw.match(/(\d{4})/);
-  if (yOnly) {
-    const y = Number(yOnly[1]);
-    return new Date(y, 0, 1).getTime();
+  const yearOnly = raw.match(/(\d{4})/);
+
+  if (yearOnly) {
+    return new Date(Number(yearOnly[1]), 0, 1).getTime();
   }
 
   return 0;
 };
 
-// Sort latest first
 const projects = allProjects
   .slice()
-  .sort((a, b) => toSortableTime(b) - toSortableTime(a));
+  .sort((a, b) => {
+    const timeDifference = toSortableTime(b) - toSortableTime(a);
+
+    if (timeDifference !== 0) return timeDifference;
+
+    return (a.data.title ?? '').localeCompare(b.data.title ?? '');
+  });
 ---
 
-<BaseLayout title="Projects" description="All projects">
-  <div class="mb-8 space-y-2 fade-in-up">
-    <h1 class="text-3xl font-semibold tracking-tight dark:text-emerald-300">
-      Projects
-    </h1>
+<BaseLayout title="Projects" description="Engineering projects and selected work">
+  <!-- ═══════════════ PAGE HEADER ═══════════════ -->
+  <header class="projects-header fade-in-up">
+    <div>
+      <div class="page-eyebrow t-mono">SELECTED ENGINEERING WORK</div>
 
-    <p class="t-muted text-sm">
-      Selected work and engineering projects.
-    </p>
+      <h1>Projects</h1>
 
-    <div class="t-mono t-meta text-xs">
-      $ ls -la projects/ <span class="cursor-blink ml-1">|</span>
+      <p class="t-muted">
+        Mechanical design, simulation, experimentation, and thermal-fluid
+        projects developed through research, coursework, and independent work.
+      </p>
     </div>
-  </div>
 
-  <!-- Full-width stacked list -->
-  <div class="space-y-6 fade-in-up delay-1">
-    {projects.map((p) => (
-      <a
-        href={`/projects/${p.slug}`}
-        class="t-card group block overflow-hidden transition hover:-translate-y-0.5"
-      >
-        <div class="grid md:grid-cols-[340px_1fr]">
-          {/* Left cover image (optional) */}
-          {p.data.coverImage ? (
-            <div class="relative h-72 overflow-hidden md:h-full">
+    <div
+      class="project-count t-mono"
+      aria-label={`${projects.length} project entries`}
+    >
+      <span>{String(projects.length).padStart(2, '0')}</span>
+      <small>PROJECTS</small>
+    </div>
+  </header>
+
+  <!-- ═══════════════ PROJECT LIST ═══════════════ -->
+  <section class="projects-list fade-in-up delay-1">
+    {projects.map((project, index) => {
+      const cover =
+        project.data.coverImage ??
+        project.data.cover ??
+        null;
+
+      const highlights = Array.isArray(project.data.description2)
+        ? project.data.description2.slice(0, 3)
+        : [];
+
+      const tags = Array.isArray(project.data.tags)
+        ? project.data.tags.slice(0, 6)
+        : [];
+
+      const number = String(index + 1).padStart(2, '0');
+
+      return (
+        <a
+          href={`/projects/${project.slug}`}
+          class="project-entry group focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          aria-label={`View project: ${project.data.title}`}
+        >
+          <div class="project-image-wrap">
+            {cover ? (
               <img
-                src={p.data.coverImage}
-                alt={p.data.title}
-                class="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                src={cover}
+                alt={project.data.coverAlt ?? project.data.title}
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-70 group-hover:opacity-50" />
-            </div>
-          ) : (
-            <div class="h-72 bg-slate-100 md:h-full dark:bg-white/5" />
-          )}
+            ) : (
+              <div class="project-placeholder t-mono">
+                NO PREVIEW
+              </div>
+            )}
 
-          {/* Right content */}
-          <div class="p-5 md:p-7">
-            <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-              <div class="t-mono text-xs text-slate-500 dark:text-[#d7fbe7]/60">
-              {p.data.date ?? p.data.period ?? 'Project'}
-            </div>
+            <span class="image-number t-mono">
+              {number}
+            </span>
+          </div>
 
+          <div class="project-copy">
+            <div class="project-topline">
+              <span class="project-number t-mono">
+                PROJECT {number}
+              </span>
 
-
-              {p.data.company ? (
-                <>
-                  <span class="text-slate-300 dark:text-white/20">•</span>
-                  <div class="t-meta text-xs">
-                    <span class="t-mono font-semibold text-slate-800 dark:text-[#d7fbe7]">
-                      {p.data.company}
-                    </span>
-                  </div>
-                </>
-              ) : null}
+              <span class="project-period t-mono">
+                {project.data.date ??
+                  project.data.period ??
+                  'Project'}
+              </span>
             </div>
 
-            <h2 class="mt-2 text-xl font-semibold text-slate-900 dark:text-[#d7fbe7] group-hover:underline">
-              {p.data.title}
-            </h2>
+            <h2>{project.data.title}</h2>
 
-            {Array.isArray(p.data.description2) && p.data.description2.length > 0 && (
-  <ul class="mt-3 space-y-3 text-sm text-slate-600 dark:text-slate-300 list-disc pl-5">
-  {p.data.description2.slice(0, 3).map((item, idx) => (
-    <li key={idx} class="leading-6">
-      {item}
-    </li>
-  ))}
-</ul>
-)}
+            {project.data.company ? (
+              <p class="project-company">
+                {project.data.company}
+              </p>
+            ) : null}
 
+            {highlights.length ? (
+              <ul class="project-highlights">
+                {highlights.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            ) : project.data.summary || project.data.description ? (
+              <p class="project-summary">
+                {project.data.summary ?? project.data.description}
+              </p>
+            ) : null}
 
-            {p.data.tags?.length ? (
-              <div class="mt-4 flex flex-wrap gap-2">
-                {p.data.tags.slice(0, 6).map((t) => (
-                  <span class="t-badge t-mono">{t}</span>
+            {tags.length ? (
+              <div class="project-tags" aria-label="Project technologies">
+                {tags.map((tag, tagIndex) => (
+                  <>
+                    <span>{tag}</span>
+
+                    {tagIndex < tags.length - 1 ? (
+                      <span class="tag-separator" aria-hidden="true">·</span>
+                    ) : null}
+                  </>
                 ))}
               </div>
             ) : null}
 
-            <div class="mt-6 t-mono text-xs font-semibold text-slate-700 dark:text-emerald-300/90">
-              $ open ./projects/{p.slug}{' '}
-              <span class="inline-block transition group-hover:translate-x-0.5">→</span>
+            <div class="project-link t-mono">
+              VIEW PROJECT
+              <span aria-hidden="true">↗</span>
             </div>
           </div>
-        </div>
-      </a>
-    ))}
-  </div>
+        </a>
+      );
+    })}
+  </section>
+
+  <style>
+    /* ══════════════════════════════════════════
+       PAGE HEADER
+       ══════════════════════════════════════════ */
+
+    .projects-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 3rem;
+      padding: 1.5rem 0 2rem;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.28);
+    }
+
+    .page-eyebrow {
+      margin-bottom: 0.7rem;
+      color: #10b981;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.11em;
+    }
+
+    .projects-header h1 {
+      margin: 0;
+      color: #0f172a;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 750;
+      line-height: 1.1;
+      letter-spacing: -0.035em;
+    }
+
+    .projects-header p {
+      max-width: 44rem;
+      margin: 0.85rem 0 0;
+      font-size: 0.94rem;
+      line-height: 1.75;
+    }
+
+    .project-count {
+      display: flex;
+      min-width: 5rem;
+      flex-direction: column;
+      align-items: flex-end;
+      color: #64748b;
+    }
+
+    .project-count span {
+      color: #0f172a;
+      font-size: 1.8rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .project-count small {
+      margin-top: 0.35rem;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+    }
+
+    /* ══════════════════════════════════════════
+       PROJECT LIST
+       ══════════════════════════════════════════ */
+
+    .projects-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .project-entry {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(15rem, 0.72fr) minmax(0, 1.5fr);
+      gap: clamp(2rem, 4vw, 4rem);
+      align-items: center;
+      padding: 3rem 0;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .project-entry::before {
+      content: "";
+      position: absolute;
+      inset: 0.75rem -1rem;
+      z-index: -1;
+      border-radius: 1rem;
+      background: transparent;
+      transition:
+        background-color 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    .project-entry:hover::before {
+      background: rgba(255, 255, 255, 0.36);
+      box-shadow: 0 18px 48px rgba(15, 23, 42, 0.035);
+    }
+
+    .project-image-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      border-radius: 0.8rem;
+      background: rgba(148, 163, 184, 0.1);
+    }
+
+    .project-image-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(15, 23, 42, 0.07);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    .project-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(100%);
+      transition:
+        transform 350ms ease,
+        filter 250ms ease;
+    }
+
+    .project-entry:hover .project-image-wrap img {
+      transform: scale(1.035);
+      filter: grayscale(15%);
+    }
+
+    .project-placeholder {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      font-size: 0.66rem;
+      letter-spacing: 0.08em;
+    }
+
+    .image-number {
+      position: absolute;
+      top: 0.8rem;
+      left: 0.8rem;
+      z-index: 1;
+      display: inline-flex;
+      min-width: 2rem;
+      height: 1.75rem;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      border-radius: 0.35rem;
+      background: rgba(15, 23, 42, 0.62);
+      color: #ffffff;
+      font-size: 0.64rem;
+      font-weight: 700;
+      backdrop-filter: blur(8px);
+    }
+
+    .project-copy {
+      min-width: 0;
+    }
+
+    .project-topline {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem 1rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .project-number {
+      color: #059669;
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+
+    .project-period {
+      color: #64748b;
+      font-size: 0.65rem;
+      line-height: 1.5;
+    }
+
+    .project-copy h2 {
+      max-width: 27ch;
+      margin: 0;
+      color: #0f172a;
+      font-size: clamp(1.35rem, 2.5vw, 2rem);
+      font-weight: 750;
+      line-height: 1.35;
+      letter-spacing: -0.025em;
+      transition: color 160ms ease;
+    }
+
+    .project-entry:hover .project-copy h2 {
+      color: #059669;
+    }
+
+    .project-company {
+      margin: 0.4rem 0 0;
+      color: #64748b;
+      font-size: 0.76rem;
+      font-weight: 650;
+      line-height: 1.6;
+    }
+
+    .project-highlights {
+      display: flex;
+      max-width: 57rem;
+      flex-direction: column;
+      gap: 0.65rem;
+      margin: 1.25rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .project-highlights li {
+      position: relative;
+      padding-left: 1rem;
+      color: #475569;
+      font-size: 0.87rem;
+      line-height: 1.75;
+    }
+
+    .project-highlights li::before {
+      content: "";
+      position: absolute;
+      top: 0.69em;
+      left: 0;
+      width: 0.32rem;
+      height: 0.32rem;
+      border-radius: 50%;
+      background: #10b981;
+    }
+
+    .project-summary {
+      max-width: 57rem;
+      margin: 1.15rem 0 0;
+      color: #475569;
+      font-size: 0.87rem;
+      line-height: 1.75;
+    }
+
+    /* Plain-text technology list */
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.1rem 0.38rem;
+      margin-top: 1.1rem;
+      color: #64748b;
+      font-size: 0.7rem;
+      line-height: 1.7;
+    }
+
+    .tag-separator {
+      color: #10b981;
+    }
+
+    .project-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-top: 1.35rem;
+      color: #059669;
+      font-size: 0.64rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+
+    .project-link span {
+      transition: transform 160ms ease;
+    }
+
+    .project-entry:hover .project-link span {
+      transform: translate(2px, -2px);
+    }
+
+    /* Dark mode */
+
+    :global(.dark) .projects-header,
+    :global(.dark) .project-entry {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    :global(.dark) .projects-header h1,
+    :global(.dark) .project-count span,
+    :global(.dark) .project-copy h2 {
+      color: #d7fbe7;
+    }
+
+    :global(.dark) .project-count,
+    :global(.dark) .project-period,
+    :global(.dark) .project-company,
+    :global(.dark) .project-tags {
+      color: #94a3b8;
+    }
+
+    :global(.dark) .project-highlights li,
+    :global(.dark) .project-summary {
+      color: #cbd5e1;
+    }
+
+    :global(.dark) .project-entry:hover::before {
+      background: rgba(15, 23, 42, 0.38);
+      box-shadow: none;
+    }
+
+    :global(.dark) .project-image-wrap {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    :global(.dark) .project-image-wrap::after {
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Responsive */
+
+    @media (max-width: 900px) {
+      .project-entry {
+        grid-template-columns: minmax(13rem, 0.8fr) minmax(0, 1.2fr);
+        gap: 2rem;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .projects-header {
+        align-items: flex-start;
+      }
+
+      .project-count {
+        min-width: auto;
+      }
+
+      .project-entry {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 2.5rem 0;
+      }
+
+      .project-copy h2 {
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .projects-header {
+        display: block;
+      }
+
+      .project-count {
+        display: none;
+      }
+
+      .projects-header p {
+        font-size: 0.86rem;
+      }
+
+      .project-image-wrap {
+        aspect-ratio: 16 / 11;
+      }
+
+      .project-copy h2 {
+        font-size: 1.3rem;
+      }
+
+      .project-highlights li,
+      .project-summary {
+        font-size: 0.82rem;
+      }
+    }
+  </style>
 </BaseLayout>

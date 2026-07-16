@@ -54,12 +54,20 @@ const toSortableTime = (value) => {
   return 0;
 };
 
-const formatSafeDate = (dateStr) => {
-  if (!dateStr) return '';
-  const d = new Date(`${dateStr}T00:00:00`);
-  if (Number.isNaN(d.getTime())) return dateStr;
+const formatSafeDate = (value) => {
+  if (!value) return '';
 
-  return d.toLocaleDateString(undefined, {
+  const raw = value instanceof Date ? value : value.toString().trim();
+  const date =
+    raw instanceof Date
+      ? raw
+      : new Date(/^\d{4}-\d{2}-\d{2}$/.test(raw) ? `${raw}T00:00:00` : raw);
+
+  if (Number.isNaN(date.getTime())) {
+    return value.toString();
+  }
+
+  return date.toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -68,16 +76,12 @@ const formatSafeDate = (dateStr) => {
 
 // Latest ONE news
 const latestNews = allNews
-  .filter((n) => {
-    const raw = n.data.date ?? '';
-    return raw && !Number.isNaN(new Date(`${raw}T00:00:00`).getTime());
-  })
   .slice()
-  .sort((a, b) => {
-    const ta = new Date(`${a.data.date}T00:00:00`).getTime();
-    const tb = new Date(`${b.data.date}T00:00:00`).getTime();
-    return tb - ta;
-  })
+  .sort(
+    (a, b) =>
+      toSortableTime(b.data.date) -
+      toSortableTime(a.data.date)
+  )
   .slice(0, 1);
 
 // Education
@@ -160,6 +164,17 @@ const sortedProjects = allProjects
 
 const featured = sortedProjects.filter((p) => p.data.featured);
 const projects = (featured.length ? featured : sortedProjects).slice(0, 4);
+
+
+const experienceHighlights = (entry) => {
+  const body = entry.body ?? '';
+  return body
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => /^[-*]\s+/.test(line))
+    .map((line) => line.replace(/^[-*]\s+/, ''))
+    .slice(0, 4);
+};
 ---
 
 <BaseLayout title="Sandip Gautam – Portfolio">
@@ -175,7 +190,7 @@ const projects = (featured.length ? featured : sortedProjects).slice(0, 4);
 </h1>
         </div>
 
-        <p class="t-muted mx-auto max-w-xl text-[17px] leading-relaxed sm:mx-0 sm:max-w-2xl sm:text-[18px]">
+        <p class="hero-summary t-muted mx-auto text-[17px] leading-relaxed sm:mx-0 sm:text-[18px]">
           <span class="font-semibold text-slate-900 dark:text-[#d7fbe7]">
             Mechanical Engineering M.S. student
           </span>{' '}
@@ -239,271 +254,1461 @@ const projects = (featured.length ? featured : sortedProjects).slice(0, 4);
     </div>
   </section>
 
+  <!-- ═══════════════ QUICK STATS ═══════════════ -->
+  <section class="quick-stats fade-in-up delay-1" aria-label="Portfolio highlights">
+    <div class="quick-stat">
+      <strong class="t-mono">{projects.length}</strong>
+      <span>Featured Projects</span>
+    </div>
+
+    <div class="quick-stat">
+      <strong class="t-mono">2+</strong>
+      <span>Years of Research</span>
+    </div>
+
+    <div class="quick-stat">
+      <strong class="t-mono">FE</strong>
+      <span>Mechanical Passed</span>
+    </div>
+
+    <div class="quick-stat">
+      <strong class="t-mono">M.S.</strong>
+      <span>Mechanical Engineering</span>
+    </div>
+  </section>
+
   <!-- ═══════════════ LATEST NEWS ═══════════════ -->
-  {latestNews.length ? (
-    <section class="mt-16 fade-in-up delay-1">
-      <div class="mb-4 flex items-center justify-between">
-        <h2 class="t-mono text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-emerald-400">
-          LATEST NEWS
-        </h2>
+  {latestNews.length > 0 && (() => {
+  const news = latestNews[0];
+
+  const newsImage =
+    news.data.coverImage ??
+    news.data.image ??
+    news.data.cover ??
+    null;
+
+  const newsDate =
+    news.data.date instanceof Date
+      ? news.data.date.toISOString()
+      : news.data.date?.toString();
+
+  return (
+    <section class="latest-news-section mt-12 fade-in-up delay-1">
+      <div class="latest-news-heading">
+        <div>
+          <span class="latest-news-eyebrow t-mono">
+            LATEST UPDATE
+          </span>
+
+          <h2>What I am doing recently</h2>
+        </div>
+
         <a
           href="/news"
-          class="t-mono t-meta rounded text-xs transition hover:text-slate-900 dark:hover:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          class="latest-news-all t-mono focus:outline-none focus:ring-2 focus:ring-emerald-400"
           aria-label="View all news"
+        >
+          ALL NEWS
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+
+      <a
+        href={`/news/${news.slug}`}
+        class="latest-news-feature group focus:outline-none focus:ring-2 focus:ring-emerald-400"
+        aria-label={`Read latest update: ${news.data.title}`}
+      >
+        <div class="latest-news-image">
+          {newsImage ? (
+            <img
+              src={newsImage}
+              alt={news.data.coverAlt ?? news.data.title}
+              loading="lazy"
+            />
+          ) : (
+            <div class="latest-news-placeholder">
+              <div
+                class="placeholder-grid"
+                aria-hidden="true"
+              ></div>
+
+              <div class="placeholder-content">
+                <span class="placeholder-label t-mono">
+                  LATEST UPDATE
+                </span>
+              </div>
+            </div>
+          )}
+
+          <span class="latest-news-badge t-mono">
+            NEW
+          </span>
+        </div>
+
+        <div class="latest-news-copy">
+          {newsDate ? (
+            <time
+              class="latest-news-date t-mono"
+              datetime={newsDate}
+            >
+              {formatSafeDate(news.data.date)}
+            </time>
+          ) : null}
+
+          <h3>{news.data.title}</h3>
+
+          <span class="latest-news-open t-mono">
+            READ UPDATE
+            <span aria-hidden="true">↗</span>
+          </span>
+        </div>
+      </a>
+    </section>
+  );
+})()}
+
+  <!-- ═══════════════ EDUCATION + SKILLS ═══════════════ -->
+ <section class="mt-12 fade-in-up delay-2">
+  <div class="education-skills-grid">
+    <!-- Education -->
+    {education.length ? (
+      <div class="education-section">
+        <div class="subsection-heading">
+          <h2 class="t-mono">EDUCATION</h2>
+          <span></span>
+        </div>
+
+        <div class="education-timeline">
+          {education.map((ed) => (
+            <article class="education-row">
+              <div class="education-date t-mono">
+                <span>{ed.data.start}</span>
+
+                {ed.data.end ? (
+                  <>
+                    <span class="education-date-separator">–</span>
+                    <span>{ed.data.end}</span>
+                  </>
+                ) : null}
+              </div>
+
+              <div class="education-marker" aria-hidden="true">
+                <span></span>
+              </div>
+
+              <div class="education-content">
+                <h3>{ed.data.degree}</h3>
+
+                <p class="education-school">
+                  <strong>{ed.data.school}</strong>
+
+                  {ed.data.location ? (
+                    <>
+                      <span class="school-divider">—</span>
+                      <span>{ed.data.location}</span>
+                    </>
+                  ) : null}
+                </p>
+
+                {ed.data.courses?.length ? (
+                  <div class="education-tags">
+                    {ed.data.courses.map((course) => (
+                      <span class="education-tag t-mono">{course}</span>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    ) : null}
+
+    <!-- Skills -->
+    {skills.length ? (
+      <div class="skills-section">
+        <div class="subsection-heading">
+          <h2 class="t-mono">SKILLS</h2>
+          <span></span>
+        </div>
+
+        <div class="skills-list">
+          {skills.map((skill) => (
+            <article class="skill-row">
+              <div class="skill-icon" aria-hidden="true">
+                {skill.icon}
+              </div>
+
+              <h3>{skill.title}</h3>
+
+              <div class="skill-details">
+                {skill.tags.map((tag, index) => (
+                  <>
+                    <span>{tag}</span>
+                    {index < skill.tags.length - 1 ? (
+                      <span class="skill-separator" aria-hidden="true">·</span>
+                    ) : null}
+                  </>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    ) : null}
+  </div>
+</section>
+
+  <!-- ═══════════════ EXPERIENCE ═══════════════ -->
+  {experiences.length ? (
+    <section class="mt-12 fade-in-up delay-4">
+      <div class="mb-5 flex items-center justify-between">
+        <h2 class="t-mono text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-emerald-400">
+          EXPERIENCE
+        </h2>
+        <a
+          href="/experience"
+          class="t-mono t-meta rounded text-xs transition hover:text-slate-900 dark:hover:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          aria-label="View all experience"
         >
           ALL →
         </a>
       </div>
 
-      <a
-        href={`/news/${latestNews[0].slug}`}
-        class="t-card group block p-6 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-      >
-        <div class="flex items-start gap-4">
-          <div class="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          <div>
-            <div class="font-semibold text-slate-900 transition group-hover:text-emerald-700 dark:text-[#d7fbe7] dark:group-hover:text-emerald-300">
-              {latestNews[0].data.title}
-            </div>
-            {latestNews[0].data.date ? (
-              <div class="mt-1.5 t-mono t-meta text-xs">
-                {formatSafeDate(latestNews[0].data.date)}
-              </div>
-            ) : null}
-          </div>
-        </div>
-      </a>
-    </section>
-  ) : null}
+      <div class="experience-list">
+        {experiences.map((experience) => {
+          const highlights = experienceHighlights(experience);
 
-  <!-- ═══════════════ EDUCATION ═══════════════ -->
-  {education.length ? (
-    <section class="mt-16 fade-in-up delay-2">
-      <div class="mb-4">
-        <h2 class="t-mono text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-emerald-400">
-          EDUCATION
-        </h2>
-      </div>
-
-      <div class="space-y-4">
-        {education.map((ed) => (
-          <div class="t-card p-6">
-            <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-              <div class="t-mono t-meta text-xs">
-                {ed.data.start}{ed.data.end ? ` – ${ed.data.end}` : ''}
+          return (
+            <a
+              href={`/experience/${experience.slug}`}
+              class="experience-row group focus:outline-none focus:ring-2 focus:ring-emerald-400"
+            >
+              <div class="experience-date t-mono t-meta">
+                {(experience.data.start ?? '')}
+                {experience.data.end ? ` – ${experience.data.end}` : ' – Present'}
               </div>
-              <span class="text-slate-300 dark:text-white/20">·</span>
-              <div class="t-meta text-xs">
-                <span class="font-semibold text-slate-800 dark:text-[#d7fbe7]">
-                  {ed.data.school}
-                </span>
-                {ed.data.location ? ` — ${ed.data.location}` : ''}
-              </div>
-            </div>
 
-            <div class="mt-2 text-lg font-semibold text-slate-900 dark:text-[#d7fbe7]">
-              {ed.data.degree}
-            </div>
-
-            {ed.data.courses?.length ? (
-              <div class="mt-4">
-                <div class="t-mono t-meta mb-2 text-[11px] tracking-wide">COURSEWORK</div>
-                <div class="flex flex-wrap gap-2">
-                  {ed.data.courses.map((c) => (
-                    <span class="t-badge t-mono">{c}</span>
-                  ))}
-                </div>
+              <div class="experience-marker" aria-hidden="true">
+                <span></span>
               </div>
-            ) : null}
-          </div>
-        ))}
+
+              <div class="experience-content">
+                <h3>{experience.data.title}</h3>
+
+                <p class="experience-company">
+                  <strong>{experience.data.company}</strong>
+                  {experience.data.location ? ` — ${experience.data.location}` : ''}
+                </p>
+
+                {highlights.length ? (
+                  <ul class="experience-highlights">
+                    {highlights.map((item) => <li>{item}</li>)}
+                  </ul>
+                ) : (
+                  <p class="experience-summary">
+                    {experience.data.summary ?? 'View details.'}
+                  </p>
+                )}
+              </div>
+            </a>
+          );
+        })}
       </div>
     </section>
   ) : null}
-
-  <!-- ═══════════════ SKILLS ═══════════════ -->
-  <section class="skills-wrap mt-16 fade-in-up delay-3">
-    <div class="mb-4">
-      <h2 class="t-mono text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-emerald-400">
-        SKILLS
-      </h2>
-    </div>
-
-    <div class="grid gap-4 sm:grid-cols-2">
-      {skills.map((s) => (
-        <div class="t-card skills-card p-6">
-          <div class="flex items-center gap-2.5">
-            <span class="text-lg" aria-hidden="true">{s.icon}</span>
-            <div class="t-mono text-xs font-semibold tracking-wider text-slate-800 dark:text-[#d7fbe7]">
-              {s.title}
-            </div>
-          </div>
-
-          <div class="mt-4 flex flex-wrap gap-2">
-            {s.tags.map((t) => (
-              <span class="t-badge t-mono skills-chip">{t}</span>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-
-    <style>
-      .skills-wrap .skills-card {
-        position: relative;
-        overflow: hidden;
-        transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
-      }
-
-      .skills-wrap .skills-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.10);
-      }
-
-      :global(.dark) .skills-wrap .skills-card:hover {
-        box-shadow: 0 16px 44px rgba(0, 0, 0, 0.40);
-      }
-
-      .skills-wrap .skills-chip {
-        border-radius: 999px;
-        padding: 6px 10px;
-        font-size: 12px;
-        line-height: 1.2;
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        .skills-wrap .skills-card,
-        .skills-wrap .skills-chip {
-          transition: none !important;
-        }
-
-        .skills-wrap .skills-card:hover {
-          transform: none !important;
-        }
-      }
-    </style>
-  </section>
-
-  <!-- ═══════════════ EXPERIENCE ═══════════════ -->
-  <section class="mt-16 fade-in-up delay-4">
-    <div class="mb-4 flex items-center justify-between">
-      <h2 class="t-mono text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-emerald-400">
-        EXPERIENCE
-      </h2>
-      <a
-        href="/experience"
-        class="t-mono t-meta rounded text-xs transition hover:text-slate-900 dark:hover:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-        aria-label="View all experience"
-      >
-        ALL →
-      </a>
-    </div>
-
-    <div class="space-y-4">
-      {experiences.map((e) => (
-        <a
-          href={`/experience/${e.slug}`}
-          class="t-card group block p-6 transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-        >
-          <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-            <span class="t-mono t-meta text-xs">
-              {(e.data.start ?? '')}{e.data.end ? ` – ${e.data.end}` : ' – Present'}
-            </span>
-            <span class="text-slate-300 dark:text-white/20">·</span>
-            <span class="t-meta text-xs">
-              <span class="font-semibold text-slate-800 dark:text-[#d7fbe7]">
-                {e.data.company}
-              </span>
-              {e.data.location ? ` — ${e.data.location}` : ''}
-            </span>
-          </div>
-
-          <h3 class="mt-2 text-lg font-semibold text-slate-900 transition group-hover:text-emerald-700 dark:text-[#d7fbe7] dark:group-hover:text-emerald-300">
-            {e.data.title}
-          </h3>
-
-          <p class="t-muted mt-2 text-sm leading-relaxed">
-            {e.data.summary ?? 'View details.'}
-          </p>
-        </a>
-      ))}
-    </div>
-  </section>
 
   <!-- ═══════════════ PROJECTS ═══════════════ -->
-  <section class="mt-16 fade-in-up delay-5">
-    <div class="mb-4 flex items-center justify-between">
-      <h2 class="t-mono text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-emerald-400">
-        ENGINEERING PROJECTS
-      </h2>
-      <a
-        href="/projects"
-        class="t-mono t-meta rounded text-xs transition hover:text-slate-900 dark:hover:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-        aria-label="View all projects"
-      >
-        ALL →
-      </a>
-    </div>
+  {projects.length ? (
+    <section class="mt-12 fade-in-up delay-5">
+      <div class="mb-5 flex items-center justify-between">
+        <h2 class="t-mono text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-emerald-400">
+          ENGINEERING PROJECTS
+        </h2>
+        <a
+          href="/projects"
+          class="t-mono t-meta rounded text-xs transition hover:text-slate-900 dark:hover:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          aria-label="View all projects"
+        >
+          ALL →
+        </a>
+      </div>
 
-    <div class="grid gap-4 sm:grid-cols-2">
-      {projects.map((p) => {
-        const cover = p.data.coverImage ?? p.data.cover ?? null;
-        const projectBullets = Array.isArray(p.data.description2) ? p.data.description2.slice(0, 2) : [];
-        const projectFallback = p.data.summary ?? p.data.description ?? null;
+      <div class="project-list">
+        {projects.map((project, index) => {
+          const cover = project.data.coverImage ?? project.data.cover ?? null;
+          const highlights = Array.isArray(project.data.description2)
+            ? project.data.description2.slice(0, 3)
+            : [];
+          const tags = Array.isArray(project.data.tags)
+            ? project.data.tags.slice(0, 5)
+            : [];
 
-        return (
-          <a
-            href={`/projects/${p.slug}`}
-            class="t-card group block overflow-hidden transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-          >
-            <!-- Image -->
-            <div class="relative h-48 w-full overflow-hidden bg-slate-100 dark:bg-white/5">
-              {cover ? (
-                <img
-                  src={cover}
-                  alt={p.data.coverAlt ?? p.data.title}
-                  loading="lazy"
-                  class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
-                />
-              ) : (
-                <div class="flex h-full w-full items-center justify-center t-mono t-meta text-xs">
-                  No preview
+          return (
+            <a
+              href={`/projects/${project.slug}`}
+              class="project-row group focus:outline-none focus:ring-2 focus:ring-emerald-400"
+            >
+              <div class="project-image-wrap">
+                {cover ? (
+                  <img
+                    src={cover}
+                    alt={project.data.coverAlt ?? project.data.title}
+                    loading="lazy"
+                  />
+                ) : (
+                  <div class="project-placeholder t-mono t-meta">No preview</div>
+                )}
+              </div>
+
+              <div class="project-main">
+                <div class="project-kicker t-mono">CASE STUDY {String(index + 1).padStart(2, '0')}</div>
+
+                <h3>{project.data.title}</h3>
+
+                <div class="project-meta t-mono t-meta">
+                  <span>▣ {project.data.period ?? project.data.date ?? 'Project'}</span>
+                  <span>⌘ {tags.length} Technologies</span>
+                  <span>◉ {highlights.length} Key Outcomes</span>
                 </div>
-              )}
-              <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-transparent" />
-            </div>
 
-            <!-- Text -->
-            <div class="space-y-2 p-5">
-              <div class="t-mono t-meta text-[11px]">
-                {p.data.date ?? p.data.period ?? 'Project'}
+                {tags.length ? (
+                  <div class="project-tags">
+                    {tags.map((tag) => (
+                      <span class="t-badge t-mono">{tag}</span>
+                    ))}
+                  </div>
+                ) : null}
               </div>
 
-              <div class="leading-snug font-semibold text-slate-900 transition group-hover:text-emerald-700 dark:text-[#d7fbe7] dark:group-hover:text-emerald-300">
-                {p.data.title}
+              <div class="project-outcomes">
+                {highlights.length ? (
+                  <ul>
+                    {highlights.map((item) => <li>{item}</li>)}
+                  </ul>
+                ) : (
+                  <p>{project.data.summary ?? project.data.description ?? 'View project details.'}</p>
+                )}
               </div>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  ) : null}
 
-              {projectBullets.length > 0 ? (
-                <ul class="mt-2 list-disc space-y-2 pl-4 text-sm text-slate-600 dark:text-slate-300">
-                  {projectBullets.map((item, idx) => (
-                    <li class="leading-relaxed" key={idx}>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              ) : projectFallback ? (
-                <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-                  {projectFallback}
-                </p>
-              ) : null}
-            </div>
-          </a>
-        );
-      })}
-    </div>
-  </section>
+  <style>
+    .hero-summary {
+      max-width: 60ch;
+    }
+
+    /* ══════════════════════════════════════════
+       QUICK STATS
+       ══════════════════════════════════════════ */
+
+    .quick-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-top: 2.75rem;
+      border-top: 1px solid rgba(148, 163, 184, 0.22);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+    }
+
+    .quick-stat {
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+      gap: 0.35rem;
+      padding: 1.15rem 1rem;
+      border-right: 1px solid rgba(148, 163, 184, 0.18);
+    }
+
+    .quick-stat:first-child {
+      padding-left: 0;
+    }
+
+    .quick-stat:last-child {
+      border-right: 0;
+      padding-right: 0;
+    }
+
+    .quick-stat strong {
+      color: #059669;
+      font-size: 1rem;
+      font-weight: 750;
+      letter-spacing: 0.03em;
+    }
+
+    .quick-stat span {
+      color: #64748b;
+      font-size: 0.7rem;
+      line-height: 1.45;
+    }
+
+    :global(.dark) .quick-stats,
+    :global(.dark) .quick-stat {
+      border-color: rgba(255, 255, 255, 0.09);
+    }
+
+    :global(.dark) .quick-stat strong {
+      color: #34d399;
+    }
+
+    :global(.dark) .quick-stat span {
+      color: #94a3b8;
+    }
+
+    /* ══════════════════════════════════════════
+       LATEST NEWS
+       ══════════════════════════════════════════ */
+
+.latest-news-section {
+  padding: 1.4rem 0 0;
+}
+
+.latest-news-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 1.2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.26);
+}
+
+.latest-news-eyebrow {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: #10b981;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+}
+
+.latest-news-heading h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+  font-weight: 750;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+.latest-news-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #64748b;
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  transition:
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.latest-news-all:hover {
+  color: #059669;
+  transform: translateX(2px);
+}
+
+.latest-news-feature {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(14rem, 0.72fr) minmax(0, 1.28fr);
+  gap: clamp(1.6rem, 4vw, 3.5rem);
+  align-items: center;
+  padding: 1rem 0 2.25rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.latest-news-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 0.8rem;
+  background: rgba(148, 163, 184, 0.09);
+}
+
+.latest-news-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border: 1px solid rgba(15, 23, 42, 0.07);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.latest-news-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 350ms ease;
+}
+
+.latest-news-feature:hover .latest-news-image img {
+  transform: scale(1.035);
+}
+
+/* No-image gradient placeholder */
+
+.latest-news-placeholder {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      circle at 18% 20%,
+      rgba(16, 185, 129, 0.34),
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 82% 78%,
+      rgba(52, 211, 153, 0.18),
+      transparent 42%
+    ),
+    linear-gradient(
+      135deg,
+      #07110e 0%,
+      #0b1720 48%,
+      #0c2b21 100%
+    );
+}
+
+.latest-news-placeholder::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      120deg,
+      transparent 20%,
+      rgba(16, 185, 129, 0.07) 50%,
+      transparent 80%
+    );
+  transform: translateX(-70%);
+  transition: transform 500ms ease;
+}
+
+.latest-news-feature:hover .latest-news-placeholder::before {
+  transform: translateX(70%);
+}
+
+.placeholder-grid {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      rgba(16, 185, 129, 0.065) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(16, 185, 129, 0.065) 1px,
+      transparent 1px
+    );
+  background-size: 36px 36px;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.95),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.95),
+    transparent
+  );
+}
+
+.placeholder-content {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholder-label {
+  color: rgba(236, 253, 245, 0.92);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.latest-news-badge {
+  position: absolute;
+  top: 0.8rem;
+  left: 0.8rem;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.7rem;
+  padding: 0 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 0.35rem;
+  background: rgba(15, 23, 42, 0.66);
+  color: #ffffff;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  backdrop-filter: blur(8px);
+}
+
+.latest-news-copy {
+  min-width: 0;
+}
+
+.latest-news-date {
+  display: block;
+  margin-bottom: 0.75rem;
+  color: #059669;
+  font-size: 0.62rem;   /* was 0.67rem */
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.latest-news-copy h3 {
+  max-width: 26ch;
+  margin: 0;
+  color: #0f172a;
+  font-size: clamp(1.2rem, 2.3vw, 1.8rem);
+  line-height: 1.35;
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  transition: color 160ms ease;
+}
+
+.latest-news-feature:hover .latest-news-copy h3 {
+  color: #059669;
+}
+
+.latest-news-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 1.3rem;
+  color: #64748b;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.latest-news-open > span {
+  color: #10b981;
+  transition: transform 160ms ease;
+}
+
+.latest-news-feature:hover .latest-news-open > span {
+  transform: translate(2px, -2px);
+}
+
+/* Dark mode */
+
+:global(.dark) .latest-news-heading {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+:global(.dark) .latest-news-heading h2,
+:global(.dark) .latest-news-copy h3 {
+  color: #d7fbe7;
+}
+
+:global(.dark) .latest-news-all,
+:global(.dark) .latest-news-open {
+  color: #94a3b8;
+}
+
+:global(.dark) .latest-news-image {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+:global(.dark) .latest-news-image::after {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Responsive */
+
+@media (max-width: 760px) {
+  .latest-news-feature {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .latest-news-copy h3 {
+    max-width: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .latest-news-heading {
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .latest-news-heading h2 {
+    font-size: 1.05rem;
+  }
+
+  .latest-news-all {
+    flex-shrink: 0;
+    font-size: 0.58rem;
+  }
+
+  .latest-news-image {
+    aspect-ratio: 16 / 10;
+  }
+
+  .latest-news-copy h3 {
+    font-size: 1.3rem;
+  }
+}
+    /* ══════════════════════════════════════════
+       EDUCATION + SKILLS
+       ══════════════════════════════════════════ */
+
+    .education-skills-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+      gap: clamp(3.5rem, 6vw, 6.5rem);
+      align-items: start;
+    }
+
+    .subsection-heading {
+      margin-bottom: 1.15rem;
+    }
+
+    .subsection-heading h2 {
+      margin: 0;
+      color: #1e293b;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+
+    .subsection-heading > span {
+      display: block;
+      width: 2.65rem;
+      height: 1px;
+      margin-top: 0.85rem;
+      background: #10b981;
+    }
+
+    /* Education */
+
+    .education-timeline {
+      position: relative;
+    }
+
+    .education-row {
+      display: grid;
+      grid-template-columns: 7rem 1.1rem minmax(0, 1fr);
+      gap: 0.85rem;
+      min-height: 12.4rem;
+    }
+
+    .education-row:last-child {
+      min-height: auto;
+    }
+
+    .education-date {
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      gap: 0.1rem 0.4rem;
+      padding-top: 0.25rem;
+      color: #059669;
+      font-size: 0.66rem;
+      font-weight: 500;
+      line-height: 1.65;
+    }
+
+    .education-date-separator {
+      color: #10b981;
+    }
+
+    .education-marker {
+      position: relative;
+      display: flex;
+      justify-content: center;
+    }
+
+    .education-marker::after {
+      content: "";
+      position: absolute;
+      top: 0.72rem;
+      bottom: 0;
+      left: 50%;
+      width: 1px;
+      background: linear-gradient(
+        to bottom,
+        rgba(16, 185, 129, 0.72),
+        rgba(148, 163, 184, 0.3)
+      );
+      transform: translateX(-50%);
+    }
+
+    .education-row:last-child .education-marker::after {
+      bottom: -0.65rem;
+    }
+
+    .education-marker span {
+      position: relative;
+      z-index: 1;
+      width: 0.78rem;
+      height: 0.78rem;
+      margin-top: 0.25rem;
+      border: 2px solid #6ee7b7;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.11);
+    }
+
+    .education-content {
+      padding-bottom: 2.8rem;
+    }
+
+    .education-row:last-child .education-content {
+      padding-bottom: 0;
+    }
+
+    .education-content h3 {
+      margin: 0;
+      color: #1e293b;
+      font-size: clamp(0.98rem, 1.35vw, 1.1rem);
+      font-weight: 750;
+      line-height: 1.4;
+      letter-spacing: -0.015em;
+    }
+
+    .education-school {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.2rem;
+      margin: 0.34rem 0 0;
+      color: #64748b;
+      font-size: 0.75rem;
+      line-height: 1.55;
+    }
+
+    .education-school strong {
+      color: #334155;
+      font-weight: 700;
+    }
+
+    .school-divider {
+      color: #94a3b8;
+    }
+
+    .education-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.42rem 0.5rem;
+      margin-top: 0.78rem;
+    }
+
+    .education-tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 1.5rem;
+      padding: 0.14rem 0.6rem;
+      border: 1px solid rgba(16, 185, 129, 0.22);
+      border-radius: 999px;
+      background: transparent;
+      color: #059669;
+      font-size: 0.59rem;
+      font-weight: 500;
+      line-height: 1.25;
+    }
+
+    /* Skills */
+
+    .skills-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .skill-row {
+      display: grid;
+      grid-template-columns: 2.55rem minmax(8rem, 0.85fr) minmax(0, 1.45fr);
+      gap: 0.85rem;
+      align-items: center;
+      min-height: 5.45rem;
+      padding: 0.95rem 0;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.24);
+    }
+
+    .skill-row:first-child {
+      padding-top: 0.35rem;
+    }
+
+    .skill-row:last-child {
+      border-bottom: 0;
+    }
+
+    .skill-icon {
+      display: flex;
+      width: 2.3rem;
+      height: 2.3rem;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(16, 185, 129, 0.22);
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.025);
+      color: #10b981;
+      font-size: 0.95rem;
+    }
+
+    .skill-row h3 {
+      margin: 0;
+      color: #1e293b;
+      font-size: 0.76rem;
+      font-weight: 750;
+      line-height: 1.38;
+    }
+
+    .skill-details {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.08rem 0.3rem;
+      color: #64748b;
+      font-size: 0.68rem;
+      line-height: 1.72;
+    }
+
+    .skill-separator {
+      color: #94a3b8;
+    }
+
+    /* ══════════════════════════════════════════
+       EXPERIENCE
+       ══════════════════════════════════════════ */
+
+    .experience-list {
+      position: relative;
+      border-top: 1px solid rgba(148, 163, 184, 0.28);
+    }
+
+   .experience-row {
+  display: grid;
+  grid-template-columns: 8.2rem 1rem minmax(0, 1fr);
+  gap: 1rem;
+  align-items: stretch;
+  padding: 1.45rem 0 1.8rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.28);
+  color: inherit;
+  text-decoration: none;
+}
+
+    .experience-date {
+      color: #059669;
+      font-size: 0.7rem;
+      line-height: 1.6;
+    }
+.experience-marker {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.experience-marker::after {
+  content: "";
+  position: absolute;
+  top: 0.72rem;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    to bottom,
+    rgba(16,185,129,.72),
+    rgba(148,163,184,.30)
+  );
+}
+
+.experience-marker span {
+  position: relative;
+  z-index: 2;
+  width: 0.78rem;
+  height: 0.78rem;
+  margin-top: 0.25rem;
+  border: 2px solid #6ee7b7;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 3px rgba(16,185,129,.11);
+}
+
+    .experience-content h3 {
+      margin: 0;
+      color: #0f172a;
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1.45;
+      transition: color 160ms ease;
+    }
+
+    .experience-row:hover .experience-content h3 {
+      color: #059669;
+    }
+
+    .experience-company {
+      margin: 0.3rem 0 0;
+      color: #64748b;
+      font-size: 0.78rem;
+      line-height: 1.6;
+    }
+
+    .experience-company strong {
+      color: #334155;
+      font-weight: 650;
+    }
+
+    .experience-highlights {
+      margin: 0.85rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .experience-highlights li {
+      position: relative;
+      margin-top: 0.42rem;
+      padding-left: 1rem;
+      color: #475569;
+      font-size: 0.84rem;
+      line-height: 1.7;
+    }
+
+    .experience-highlights li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: #10b981;
+    }
+
+    .experience-summary {
+      margin: 0.75rem 0 0;
+      color: #475569;
+      font-size: 0.84rem;
+      line-height: 1.7;
+    }
+
+    /* ══════════════════════════════════════════
+       PROJECTS
+       ══════════════════════════════════════════ */
+
+    .project-list {
+  border-top: 1px solid rgba(148, 163, 184, 0.28);
+}
+
+.project-row {
+  display: grid;
+  grid-template-columns:
+    minmax(10rem, 0.62fr)
+    minmax(15rem, 1fr)
+    minmax(20rem, 1.45fr);
+  gap: clamp(1.5rem, 3vw, 2.8rem);
+  align-items: center;
+  padding: 2.2rem 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.28);
+  color: inherit;
+  text-decoration: none;
+}
+
+.project-image-wrap {
+  display: flex;
+  min-height: 11.5rem;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.65rem;
+  background: rgba(148, 163, 184, 0.08);
+}
+
+.project-image-wrap img {
+  width: 100%;
+  height: 11.5rem;
+  object-fit: cover;
+  transition:
+    transform 280ms ease,
+    filter 220ms ease;
+}
+
+.project-row:hover .project-image-wrap img {
+  transform: scale(1.035);
+  filter: brightness(1.06);
+}
+
+.project-placeholder {
+  font-size: 0.72rem;
+}
+
+.project-kicker {
+  color: #10b981;
+  font-size: 0.66rem;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.project-main h3 {
+  margin: 0.5rem 0 0;
+  color: #0f172a;
+  font-size: clamp(1.05rem, 1.8vw, 1.35rem);
+  font-weight: 750;
+  line-height: 1.4;
+  transition:
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.project-row:hover .project-main h3 {
+  color: #059669;
+  transform: translateY(-2px);
+}
+
+.project-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-top: 0.8rem;
+  font-size: 0.68rem;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.85rem;
+}
+
+.project-tags :global(.t-badge) {
+  border-radius: 999px;
+  padding: 0.34rem 0.62rem;
+  font-size: 0.68rem;
+  line-height: 1.2;
+}
+
+.project-outcomes {
+   max-width: 36rem;      /* adjust 36–42rem */
+}
+
+.project-outcomes ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.project-outcomes li {
+  position: relative;
+  margin-top: 0.72rem;
+  padding-left: 1.15rem;
+  color: #64748b;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.8;
+}
+
+.project-outcomes li:first-child {
+  margin-top: 0;
+}
+
+.project-outcomes li::before {
+  content: "";
+  position: absolute;
+  top: 0.78em;
+  left: 0;
+  width: 0.28rem;
+  height: 0.28rem;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.82);
+}
+
+.project-outcomes p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.8;
+}
+
+    /* ══════════════════════════════════════════
+       DARK MODE
+       ══════════════════════════════════════════ */
+
+:global(.dark) .subsection-heading h2,
+:global(.dark) .education-content h3,
+:global(.dark) .skill-row h3,
+:global(.dark) .experience-content h3 {
+  color: #d7fbe7;
+}
+
+:global(.dark) .project-main h3 {
+  color: #d7fbe7;
+}
+
+:global(.dark) .education-school,
+:global(.dark) .skill-details,
+:global(.dark) .experience-company {
+  color: #aeb8c4;
+}
+
+:global(.dark) .project-meta {
+  color: #718096;
+}
+
+:global(.dark) .experience-highlights li,
+:global(.dark) .experience-summary {
+  color: #9ca7b4;
+}
+
+:global(.dark) .project-outcomes li,
+:global(.dark) .project-outcomes p {
+  color: #9aa6b4;
+}
+
+:global(.dark) .project-outcomes li::before {
+  background: rgba(16, 185, 129, 0.78);
+}
+
+:global(.dark) .education-school strong,
+:global(.dark) .experience-company strong {
+  color: #cfd8e3;
+}
+
+:global(.dark) .education-date,
+:global(.dark) .education-tag {
+  color: #34d399;
+}
+
+:global(.dark) .project-kicker {
+  color: #34d399;
+}
+
+:global(.dark) .education-tag,
+:global(.dark) .skill-icon {
+  border-color: rgba(52, 211, 153, 0.25);
+  background: rgba(16, 185, 129, 0.05);
+}
+
+:global(.dark) .project-image-wrap {
+  background: rgba(16, 185, 129, 0.05);
+}
+
+:global(.dark) .skill-row,
+:global(.dark) .experience-list,
+:global(.dark) .experience-row,
+:global(.dark) .project-list,
+:global(.dark) .project-row {
+  border-color: rgba(255, 255, 255, 0.10);
+}
+    /* Responsive */
+
+    @media (max-width: 1024px) {
+      .education-skills-grid {
+        grid-template-columns: 1fr;
+        gap: 4.5rem;
+      }
+
+      .skill-row {
+        grid-template-columns: 2.55rem minmax(9rem, 0.72fr) minmax(0, 1.4fr);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .project-row {
+        grid-template-columns: 11rem minmax(0, 1fr);
+      }
+
+      .project-outcomes {
+        grid-column: 2;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .quick-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .quick-stat:nth-child(2) {
+        border-right: 0;
+      }
+
+      .quick-stat:nth-child(-n + 2) {
+        border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+      }
+
+      .quick-stat:nth-child(3) {
+        padding-left: 0;
+      }
+
+      .latest-news-feature {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+      }
+
+      .latest-news-copy h3 {
+        max-width: none;
+      }
+
+      .education-row {
+        grid-template-columns: 4.7rem 1rem minmax(0, 1fr);
+        gap: 0.55rem;
+      }
+
+      .education-date {
+        flex-direction: column;
+        gap: 0;
+        font-size: 0.59rem;
+      }
+
+      .education-date-separator {
+        display: none;
+      }
+
+      .education-content h3 {
+        font-size: 0.95rem;
+      }
+
+      .education-school {
+        display: block;
+        font-size: 0.7rem;
+      }
+
+      .school-divider {
+        margin: 0 0.2rem;
+      }
+
+      .skill-row {
+        grid-template-columns: 2.4rem minmax(0, 1fr);
+        gap: 0.75rem;
+        align-items: start;
+      }
+
+      .skill-icon {
+        grid-row: 1 / span 2;
+      }
+
+      .skill-details {
+        grid-column: 2;
+        font-size: 0.66rem;
+      }
+
+      .experience-row {
+        grid-template-columns: 0.8rem minmax(0, 1fr);
+        gap: 0.8rem;
+      }
+
+      .experience-date {
+        grid-column: 2;
+        grid-row: 1;
+      }
+
+      .experience-marker {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+      }
+
+      .experience-content {
+        grid-column: 2;
+        grid-row: 2;
+      }
+
+      .project-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .project-image-wrap,
+      .project-image-wrap img {
+        min-height: 12rem;
+        height: 12rem;
+      }
+
+      .project-outcomes {
+        grid-column: auto;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .quick-stats {
+        margin-top: 2.25rem;
+      }
+
+      .quick-stat {
+        padding: 0.95rem 0.75rem;
+      }
+
+      .quick-stat strong {
+        font-size: 0.9rem;
+      }
+
+      .quick-stat span {
+        font-size: 0.64rem;
+      }
+
+      .latest-news-heading {
+        align-items: center;
+      }
+
+      .latest-news-heading h2 {
+        font-size: 1.05rem;
+      }
+
+      .latest-news-all {
+        font-size: 0.58rem;
+      }
+
+      .latest-news-copy h3 {
+        font-size: 1.3rem;
+      }
+
+      .latest-news-image {
+        aspect-ratio: 16 / 10;
+      }
+
+      .education-row {
+        grid-template-columns: 0.9rem minmax(0, 1fr);
+        min-height: auto;
+      }
+
+      .education-date {
+        grid-column: 2;
+        grid-row: 1;
+        flex-direction: row;
+        gap: 0.3rem;
+        padding-bottom: 0.3rem;
+      }
+
+      .education-date-separator {
+        display: inline;
+      }
+
+      .education-marker {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+      }
+
+      .education-content {
+        grid-column: 2;
+        grid-row: 2;
+        padding-bottom: 2.3rem;
+      }
+
+      .education-row:last-child .education-content {
+        padding-bottom: 0;
+      }
+    }
+  </style>
+
 </BaseLayout>
