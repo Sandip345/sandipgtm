@@ -120,8 +120,8 @@ const rendered = await Promise.all(
               </span>
 
               <span class="experience-status t-mono">
-                {experience.data.end ? 'COMPLETED' : 'CURRENT'}
-              </span>
+              {experience.data.end === 'Present' ? 'CURRENT' : 'COMPLETED'}
+            </span>
             </div>
 
             <h2>{experience.data.title}</h2>
