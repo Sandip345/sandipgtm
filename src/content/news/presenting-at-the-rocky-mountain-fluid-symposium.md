@@ -1,38 +1,34 @@
 ---
 title: "Oral Presentation at the Rocky Mountain Fluid Symposium"
-description: "I delivered an oral presentation at the Rocky Mountain Fluid Symposium hosted at the University of Colorado Boulder. My presentation focused on vortex–surface interactions, highlighting experimental methodology, free surface synthetic schlieren results, and key time-averaged observations on surface deformation induced by counter-rotating vortices. The symposium brought together researchers, graduate students, and faculty working in fluid mechanics, turbulence, and multiphase flow. The focused and interactive setting allowed for in-depth technical discussions and detailed feedback on experimental design and analysis."
-date: August 8, 2025
-location: University of Colorado Boulder, Boulder, Colorado, USA
+description: "I delivered an oral presentation at the Rocky Mountain Fluid Symposium hosted by the University of Colorado Boulder. My presentation focused on vortex–surface interactions, highlighting the experimental methodology, Free-Surface Synthetic Schlieren (FS-SS) measurements, and key time-averaged observations of surface deformation induced by submerged counter-rotating vortex pairs. The symposium brought together researchers, graduate students, and faculty working in fluid mechanics, turbulence, and multiphase flows, providing an excellent opportunity for technical discussions and valuable feedback on my experimental design and analysis."
+date: "2025-08-08"
+location: "University of Colorado Boulder, Boulder, Colorado, USA"
 ---
+
 ## Research Highlights
 
-- Presented experimental investigation of vortex interaction with a deformable free surface for two cases of vortex generation depth
-- Discussed instrumentation setup and measurement strategy  
-- Analyzed time averaged surface response and flow structure evolution  
-- Addressed experimental challenges and uncertainty considerations  
-- Engaged in technical Q&A on vortex dynamics and free-surface coupling  
----
-## Professional Development
+- Presented an experimental investigation of submerged counter-rotating vortex pair interactions with a deformable free surface for two vortex submergence depths.
+- Discussed the experimental setup, instrumentation, and Free-Surface Synthetic Schlieren (FS-SS) measurement technique.
+- Presented time-averaged free-surface deformation and its evolution downstream of the vortex generator.
+- Addressed experimental challenges, uncertainty analysis, and data processing methods.
+- Engaged in technical discussions on vortex dynamics, free-surface interactions, and experimental fluid mechanics.
 
-Participating in the symposium provided valuable opportunities to:
+More details about my presentation are available here:
 
-- Exchange ideas with researchers in fluid mechanics and applied mathematics  
-- Gain feedback to refine experimental methodology  
-- Explore emerging research directions in vortex dynamics  
-- Strengthen technical presentation and communication skills  
----
+https://rockymountainfluids.org/attachments/RMFM2025_TechnicalProgram.pdf
+
 ## Gallery
 
 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
   <img
     src="/images/uploads/news/rocky_mountain/IMG_5715.jpg"
-    alt="Presenting research at Rocky Mountain Fluid Symposium"
+    alt="Presenting research at the Rocky Mountain Fluid Symposium"
     className="rounded-xl shadow-md object-cover h-[450px] w-full"
   />
 
   <img
     src="/images/uploads/news/rocky_mountain/IMG_3873.jpg"
-    alt="Symposium session at University of Colorado Boulder"
+    alt="Technical session at the Rocky Mountain Fluid Symposium"
     className="rounded-xl shadow-md object-cover h-[450px] w-full"
   />
 </div>

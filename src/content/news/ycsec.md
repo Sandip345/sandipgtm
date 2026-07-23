@@ -1,6 +1,6 @@
 ---
 title: "Poster Presentation at YCSEC-A 2026 in Vancouver"
-description: "I will present my research at the Young Coastal Scientists and Engineers Conference–Americas in Vancouver, Canada."
+description: "I will present my research at the Young Coastal Scientists and Engineers Conference–Americas (YCSEC-A 2026) in Vancouver, Canada."
 date: "2026-08-04"
 coverImage: "/images/uploads/news/ycsec/banner.png"
 coverAlt: "Young Coastal Scientists and Engineers Conference–Americas 2026 in Vancouver"
@@ -13,11 +13,11 @@ tags:
 
 I will travel to **Vancouver, British Columbia, Canada**, on **August 4, 2026**, to attend the **Young Coastal Scientists and Engineers Conference–Americas 2026 (YCSEC-A 2026)**.
 
-At the conference, I will present a poster on my current research involving experimental fluid mechanics, free-surface flows, and the interaction of counter-rotating vortex pairs with a free surface.
+At the conference, I will present a poster titled **"Surface Signatures of Vortex Structures in Shallow-Water Environments"**. I will also deliver a **3-Minute Thesis (3MT)** presentation based on this research.
 
-YCSEC-A brings together early-career coastal scientists and engineers to share research, exchange ideas, and connect with others working in coastal and ocean engineering.
+More information about the conference program, presentation schedule, and other events is available in the official conference program:
 
-I am looking forward to presenting my work, learning about research conducted by other attendees, and visiting Vancouver for the first time.
+https://ycseca.wordpress.com/wp-content/uploads/2026/07/ycsec-a_program_071526.pdf
 
 <!-- Add a conference or poster image later:
 
