@@ -2,6 +2,9 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
+import { Image } from "astro:assets";
+import profile from "../assets/profile.jpg";
+
 const allEducation = await getCollection('education');
 const allProjects = await getCollection('projects');
 const allNews = await getCollection('news');
@@ -238,13 +241,15 @@ const experienceHighlights = (entry) => {
         <div class="relative mx-auto w-fit">
           <div class="absolute -inset-3 -z-10 rounded-[2rem] bg-gradient-to-br from-emerald-400/25 via-sky-300/10 to-transparent blur-2xl dark:from-emerald-500/20 dark:via-sky-500/10"></div>
 
-          <img
-            src="/images/profile.jpg"
-            alt="Sandip Gautam"
-            width="320"
-            height="320"
-            class="h-44 w-44 rounded-3xl object-cover shadow-xl ring-4 ring-white/80 sm:h-52 sm:w-52 md:h-56 md:w-56 dark:ring-emerald-500/15"
-          />
+          <Image
+  src={profile}
+  alt="Sandip Gautam"
+  width={320}
+  height={320}
+  loading="eager"
+  fetchpriority="high"
+  class="h-44 w-44 rounded-3xl object-cover shadow-xl ring-4 ring-white/80 sm:h-52 sm:w-52 md:h-56 md:w-56 dark:ring-emerald-500/15"
+/>
 
           <div class="absolute -bottom-3 -right-3 rounded-xl border border-slate-200/80 bg-white/90 px-3 py-1.5 text-[10px] font-medium tracking-wide text-slate-700 shadow-md backdrop-blur dark:border-white/10 dark:bg-slate-900/80 dark:text-emerald-300">
             M.S. ME
@@ -266,10 +271,21 @@ const experienceHighlights = (entry) => {
       <span>Years of Research</span>
     </div>
 
-    <div class="quick-stat">
-      <strong class="t-mono">FE</strong>
-      <span>Mechanical Passed</span>
-    </div>
+    
+
+<div class="quick-stat">
+  <a
+    href="https://account.ncees.org/rn/2630573-1967129-c20adcd"
+    target="_blank"
+    rel="noopener noreferrer"
+    style="text-decoration: none; color: inherit;"
+  >
+    <strong class="t-mono">
+      FE <span style="font-size: 0.7em; color: #2563eb;">↗</span>
+    </strong>
+  </a>
+  <span>Mechanical Passed</span>
+</div>
 
     <div class="quick-stat">
       <strong class="t-mono">M.S.</strong>
